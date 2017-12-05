@@ -4,7 +4,7 @@ const path = require('path');
 const chalk = require('chalk');
 const workboxBuild = require('workbox-build');
 const debug = require('debug')('ember-cli:workbox');
-const { red, blue, gold } = chalk;
+const { red, blue, yellow } = chalk;
 
 function mergeOptions(options, defaultOptions) {
 	for (const option in defaultOptions) {
@@ -47,7 +47,7 @@ module.exports = {
 		const options = Object.assign({}, this.workboxOptions);
 
 		if (!this.options.enabled) {
-			debug(gold('Skipping service worker generation on local build...'));
+			debug(yellow('Skipping service worker generation on local build...'));
 			return null;
 		}
 
