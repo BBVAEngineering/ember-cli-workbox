@@ -12,23 +12,33 @@ Usage for Ember Cli
 `ember install ember-cli-workbox`
 
 ### Configuration
-By default the service worker will be generated for production builds and the service worker will be registered on an initializer.
-You can further customize ember-cli-workbox by setting configurations in your environment.js file:
+By default the service worker will be generated only for production builds and the service worker will be registered on an initializer.
+If you need to customize **ember-cli-workbox configuration** you can do it like this:
 
 ```JavaScript
 //app/config/environment.js
 
-ENV.workbox = {
-  enabled: true,
+ENV['ember-cli-workbox'] = {
+  enabled: environment !== 'test',
+  debug
+};
+```
+* **enabled** - (Boolean) Addon is enabled. Default to true on production builds
+* **debug** - (Boolean) Log addon activity TBD
+
+You can further customize ember-cli-workbox by setting **workbox configurations** in your environment.js file:
+
+```JavaScript
+//app/config/environment.js
+
+ENV['workbox'] = {
   globPatterns: ['**\/*.{html,js,css}'],
   globDirectory: './',
-  globIgnores: []
+  globIgnores: [],
+  ...
 };
 ```
 
-You have the same config properties available as workbox:
-
-* **enabled** - (Boolean) Generate service worker. Defaults to true in production.
 * **swDest** - (String) The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: './sw.js'
 * **globPatterns** - (Array of String) Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match '**\/*.{js,css,html}'
 * **globDirectory** - (String) The base directory you wish to match globPatterns against, related to the build directory. Default  './'
@@ -55,10 +65,12 @@ runtimeCaching: [{
 ]
 ```
 * **maximumFileSizeToCacheInBytes** - (number) This value can be used to determine the maximum size of files that will be precached
+* **more** - For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
 
+### Debugging
 
-For more details on Workbox configuration take a look at:
-* [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
+ DEBUG=ember-cli:workbox
+ TBW
 
 ### Improvements TBD
 
