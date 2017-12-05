@@ -4,7 +4,7 @@ const { getWithDefault, get, debug } = Ember;
 
 export function initialize(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
-	const isEnabled = getWithDefault(config, 'workbox.enabled', config.environment === 'production');
+	const isEnabled = getWithDefault(config, 'ember-cli-workbox.enabled', config.environment === 'production');
 	const swDestFile = get(config, 'workbox.swDest');
 	const sw = navigator.serviceWorker;
 
