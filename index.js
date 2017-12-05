@@ -6,39 +6,47 @@ const workboxBuild = require('workbox-build');
 const debug = require('debug')('ember-cli:workbox');
 const { red, blue, gold } = chalk;
 
+function mergeOptions(options, defaultOptions) {
+	for (const option in defaultOptions) {
+		if (!options.hasOwnProperty(option)) {
+			options[option] = defaultOptions[option];
+		}
+	}
+
+	return options;
+}
+
 module.exports = {
 	name: 'ember-cli-workbox',
 
 	config(env, baseConfig) {
-		const options = baseConfig.workbox || {};
-		const defaultOptions = {
-			enabled: env === 'production',
+		const workboxOptions = baseConfig.workbox || {};
+		const options = baseConfig['ember-cli-workbox'] || {};
+
+		mergeOptions(workboxOptions, {
+			swDest: 'sw.js',
 			globDirectory: './',
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
-			swDest: 'sw.js',
 			navigateFallback: '/index.html',
 			templatedUrls: {},
-			handleFetch: true,
 			manifestTransforms: [],
-			verbose: true,
 			skipWaiting: true,
 			clientsClaim: true,
 			cacheId: baseConfig.APP.name
-		};
+		});
 
-		for (const option in defaultOptions) {
-			if (!options.hasOwnProperty(option)) {
-				options[option] = defaultOptions[option];
-			}
-		}
+		mergeOptions(options, {
+			enabled: env === 'prod'
+		});
 
-		this.workboxOptions = options;
+		this.options = options;
+		this.workboxOptions = workboxOptions;
 	},
 
 	postBuild({ directory }) {
 		const options = Object.assign({}, this.workboxOptions);
 
-		if (!options.enabled) {
+		if (!this.options.enabled) {
 			debug(gold('Skipping service worker generation on local build...'));
 			return null;
 		}
