@@ -1,11 +1,11 @@
 import Ember from 'ember';
 
-const { getWithDefault, get, debug } = Ember;
+const { getWithDefault, debug, error } = Ember;
 
 export function initialize(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
 	const isEnabled = getWithDefault(config, 'ember-cli-workbox.enabled', config.environment === 'production');
-	const swDestFile = get(config, 'workbox.swDest');
+	const swDestFile = getWithDefault(config, 'workbox.swDest', 'sw.js');
 	const sw = navigator.serviceWorker;
 
 	// first checks whether the browser supports service workers
@@ -27,13 +27,14 @@ export function initialize(appInstance) {
 									debug('Caching complete! Future visits will work offline.');
 								}
 								break;
-							case 'redundant':
+							case 'redundant': {
 								debug('The installing service worker became redundant.');
+							}
 						}
 					};
 				};
 				if (myController) {
-					debug(`The service worker ${myController} is currently handling network operations.`);
+					debug(`The service worker ${myController.scriptURL} is currently handling network operations.`);
 				} else {
 					debug('Please reload this page to allow the service worker to handle network operations.');
 				}
@@ -52,12 +53,14 @@ export function initialize(appInstance) {
 				};
 			}
 		} else {
-			sw.getRegistrations((registrations) => {
-				registrations.forEach((registration) =>
-					registration.unregister().then(() =>
-						debug('Service worker unregistered', registration)
-					)
-				);
+			sw.getRegistrations().then((registrations) => {
+				registrations.forEach((registration) => {
+					registration.unregister().then(() => {
+						debug('Service worker unregistered');
+					}, (e) => {
+						error('Error unregistering service worker', e);
+					});
+				});
 			});
 		}
 	} else {
