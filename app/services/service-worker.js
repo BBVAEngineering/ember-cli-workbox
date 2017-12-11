@@ -78,7 +78,13 @@ export default Service.extend(Evented, {
 	},
 
 	newSWwaiting(sw) {
+		this.log('newSWwaiting');
 		this.trigger('newSWwaiting', sw);
+	},
+
+	skipWaiting(reg) {
+		this.log('skipwaiting');
+		reg.waiting.postMessage('skipWaiting');
 	},
 
 	// Check to see if the service worker controlling the page at initial load
