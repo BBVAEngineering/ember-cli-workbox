@@ -40,7 +40,7 @@ ENV['workbox'] = {
 ```
 
 * **swDest** - (String) The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: './sw.js'
-* **globPatterns** - (Array of String) Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match '**\/*.{js,css,html}'
+* **globPatterns** - (Array of String) Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match '**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'
 * **globDirectory** - (String) The base directory you wish to match globPatterns against, related to the build directory. Default  './'
 * **globIgnores** - (String or Array of String) Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns.
 E.g. globIgnores: ['**\/ignored.html']
@@ -67,10 +67,37 @@ runtimeCaching: [{
 * **maximumFileSizeToCacheInBytes** - (number) This value can be used to determine the maximum size of files that will be precached
 * **more** - For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
 
+Subscribe to events:
+
+TBW
+
+```JavaScript
+   
+
+     serviceWorker: service(),
+     
+     _subscribeToSWEvents() {
+        const sw = this.get('serviceWorker');
+
+        sw.on('newWaiting', () => {
+          window.alert('newWaiting');
+        });
+        sw.on('newActive', () => {
+          window.alert('newActive');
+        });
+
+        sw.on('registrationComplete', () => window.alert('registrationComplete'));
+	    }
+
+ ...
+]
+```
+
 ### Debugging
 
  DEBUG=ember-cli:workbox
  TBW
+
 
 ### Improvements TBD
 

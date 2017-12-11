@@ -36,6 +36,8 @@ function removeDir(dir) {
 module.exports = {
 	name: 'ember-cli-workbox',
 
+	isDevelopingAddon: () => true,
+
 	config(env, baseConfig) {
 		const workboxOptions = baseConfig.workbox || {};
 		const options = baseConfig['ember-cli-workbox'] || {};
@@ -51,8 +53,11 @@ module.exports = {
 			cacheId: projectName
 		});
 
+		const isProdBuild = env === 'prod';
+
 		mergeOptions(options, {
-			enabled: env === 'prod'
+			enabled: isProdBuild,
+			debug: !isProdBuild
 		});
 
 		this.options = options;
