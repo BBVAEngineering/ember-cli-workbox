@@ -48,7 +48,7 @@ module.exports = {
 			globDirectory: './',
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
 			skipWaiting: false,
-			clientsClaim: false,
+			clientsClaim: true,
 			importWorkboxFromCDN: false,
 			cacheId: projectName
 		});

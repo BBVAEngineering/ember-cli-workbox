@@ -21,7 +21,7 @@ export function initialize(appInstance) {
 			swService._unregisterAll();
 		}
 	} else {
-		debug('Service workers are not supported.');
+		debug('Service workers are not supported in this browser.');
 	}
 }
 
