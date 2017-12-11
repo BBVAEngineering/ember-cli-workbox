@@ -1,7 +1,9 @@
 /* eslint-disable no-sync */
+const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
-const workboxBuild = require('workbox-build-v2-with-follow');
+const workboxBuild = require('workbox-build');
+const workboxBuildPkg = require('workbox-build/package.json');
 const debug = require('debug')('ember-cli:workbox');
 const { red, blue, yellow } = chalk;
 
@@ -13,6 +15,22 @@ function mergeOptions(options, defaultOptions) {
 	}
 
 	return options;
+}
+
+function removeDir(dir) {
+	if (fs.existsSync(dir)) {
+		fs.readdirSync(dir).forEach((file) => {
+			const curPath = dir + path.sep + file;
+
+			if (fs.lstatSync(curPath).isDirectory()) {
+				removeDir(curPath);
+			} else {
+				fs.unlinkSync(curPath);
+			}
+		});
+
+		fs.rmdirSync(dir);
+	}
 }
 
 module.exports = {
@@ -29,6 +47,7 @@ module.exports = {
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
 			skipWaiting: false,
 			clientsClaim: false,
+			importWorkboxFromCDN: false,
 			cacheId: projectName
 		});
 
@@ -49,8 +68,15 @@ module.exports = {
 			workboxOptions.runtimeCaching = [];
 		}
 
-		workboxOptions.globDirectory = directory + path.sep + workboxOptions.globDirectory;
-		workboxOptions.swDest = directory + path.sep + workboxOptions.swDest;
+		workboxOptions.globDirectory = `${directory}${path.sep}${workboxOptions.globDirectory}`;
+		workboxOptions.swDest = `${directory}${path.sep}${workboxOptions.swDest}`;
+
+		const workboxDirectory = `${directory}${path.sep}workbox-v${workboxBuildPkg.version}`;
+
+		// Remove workbox libraries directory to prevent exception on recopying it.
+		if (!workboxOptions.importWorkboxFromCDN && fs.existsSync(workboxDirectory)) {
+			removeDir(workboxDirectory);
+		}
 
 		return workboxBuild.generateSW(workboxOptions).then(() => {
 			debug(blue('Service worker successfully generated.'));

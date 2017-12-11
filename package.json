@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "ember-cli-babel": "^6.3.0",
-    "workbox-build-v2-with-follow": "*"
+    "workbox-build": "*"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
