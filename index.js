@@ -2,6 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+const Funnel = require('broccoli-funnel');
+const mergeTrees = require('broccoli-merge-trees');
 const workboxBuild = require('workbox-build');
 const workboxBuildPkg = require('workbox-build/package.json');
 const debug = require('debug')('ember-cli:workbox');
@@ -50,7 +52,8 @@ module.exports = {
 			skipWaiting: false,
 			clientsClaim: true,
 			importWorkboxFromCDN: false,
-			cacheId: projectName
+			cacheId: projectName,
+			importScripts: ['assets/service-workers/skip-waiting.js']
 		});
 
 		const isProdBuild = env === 'prod';
@@ -89,6 +92,14 @@ module.exports = {
 			debug(red(`Could not generate service Worker ${e.name}`));
 
 			throw Error(e);
+		});
+	},
+
+	treeForPublic(tree) {
+		const assetsTree = new Funnel('public');
+
+		return mergeTrees([tree, assetsTree], {
+			overwrite: true
 		});
 	}
 

@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-const { Service, computed, Evented, debug, error } = Ember;
+const { Service, computed, Evented, debug } = Ember;
 
 /*
 *
@@ -14,8 +14,8 @@ const { Service, computed, Evented, debug, error } = Ember;
 *  Events triggered:
 * 		registrationComplete: sw successfully registered
 *		registrationError: sw not registered
-*		newActive: new sw controlling page
-* 		newSWwaiting: new sw waiting for controlling page
+*		newSWActive: new sw controlling page
+* 		newSWWaiting: new sw waiting for controlling page
 *		unregistrationComplete: all sw are unregistered
 */
 
@@ -33,12 +33,7 @@ export default Service.extend(Evented, {
 		}
 	},
 
-	getCurrentControllingSW() {
-		return this.get('sw').controller;
-	},
-
 	_register(swFile) {
-		this._checkCurrentSW();
 		this._watchUpdates();
 
 		return this.get('sw').register(swFile).then(this.onRegistration.bind(this)).catch((err) => {
@@ -58,20 +53,28 @@ export default Service.extend(Evented, {
 		const newSWwaiting = this.newSWwaiting.bind(this, reg);
 
 		if (reg.waiting) {
+			// SW is waiting to activate. Can occur if multiple clients open and
+			// one of the clients is refreshed.
 			newSWwaiting();
 			return;
 		}
 		if (reg.installing) {
 			this.awaitStateChange.bind(this, reg, newSWwaiting);
+			return;
 		}
 
+		// We are currently controlled so a new SW may be found...
+		// Add a listener in case a new SW is found,
 		reg.addEventListener('updatefound', this.awaitStateChange.bind(this, reg, newSWwaiting));
 	},
 
-	// listen for further changes to the new service worker's state.
+	/*
+	* Listen for further changes to the new service worker's state.
+	*/
 	awaitStateChange(reg, newSWwaiting) {
-		reg.installing.addEventListener('statechange', function () {
-			if (this.state === 'installed') {
+		reg.installing.addEventListener('statechange', (event) => {
+			if (event.target.state === 'installed') {
+				// A new service worker is available, inform the user
 				newSWwaiting(reg);
 			}
 		});
@@ -82,33 +85,35 @@ export default Service.extend(Evented, {
 		this.trigger('newSWwaiting', sw);
 	},
 
-	skipWaiting(reg) {
-		this.log('skipwaiting');
-		reg.waiting.postMessage('skipWaiting');
+	/*
+	* Send message to sw in order to launch skipWaiting and clients.claim on it
+	* New sw will become active
+	*/
+	forceActivate(reg) {
+		this.log('forceActivate');
+		reg.waiting.postMessage('force-activate');
 	},
 
-	// Check to see if the service worker controlling the page at initial load
-	// has become redundant, since this implies there's a new service worker with fresh content.
-	_checkCurrentSW() {
-		const myController = this.getCurrentControllingSW();
-
-		if (myController) {
-			myController.onstatechange = (event) => {
-				if (event.target.state === 'redundant') {
-					this.trigger('newWaiting');
-					this.log('discarded. Either failed install, or its been replaced by a newer version. You should reload');
-				}
-			};
-		}
-	},
-
-	// This fires when the service worker controlling this page
-	// changes, eg a new worker has as skipped waiting and become
-	// the new active worker. (Notfiy new version installed)
+	/*
+	* This fires when the service worker controlling this page
+	* changes, eg a new worker has as skipped waiting and become
+	* the new active worker. (Notfiy new version installed)
+	*/
 	_watchUpdates() {
-		this.get('sw').addEventListener('controllerchange', () => {
-			this.trigger('newActive');
-			this.log('New service worker controlling page');
+		this.get('sw').addEventListener('message', (event) => {
+			if (!event.data) {
+				return;
+			}
+
+			switch (event.data) {
+				case 'reload-window':
+					this.trigger('newSWActive');
+					this.log('New service worker controlling page. You should reload');
+					break;
+				default:
+					// NOOP
+					break;
+			}
 		});
 	},
 
@@ -124,7 +129,7 @@ export default Service.extend(Evented, {
 						if (boolean) {
 							this.log(`${reg} unregistered`);
 						} else {
-							error('Error unregistering ${reg}');
+							this.log(`Error unregistering ${reg}`);
 						}
 					})
 				)

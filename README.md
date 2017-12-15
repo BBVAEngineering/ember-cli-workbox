@@ -5,6 +5,7 @@ Service worker generator with precaching and some basic configurable options usi
 
 For more details on Workbox check out:
 * [Workbox Google Developers](https://developers.google.com/web/tools/workbox/)
+* [Service Workers cookbook](https://serviceworke.rs/)
 
 Usage for Ember Cli
 -------------------
@@ -69,34 +70,70 @@ runtimeCaching: [{
 
 Subscribe to events:
 
-TBW
+By default, users have to close all tabs to a site in order to update a Service Worker. The Refresh button is not enough.
+If you make a mistake here, users will see an outdated version of your site even after refreshing
+Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency.
+We can write code to notify users when a new version is available. 
+For example you could do it like this:
 
 ```JavaScript
    
+import Ember from 'ember';
 
-     serviceWorker: service(),
-     
-     _subscribeToSWEvents() {
-        const sw = this.get('serviceWorker');
+const {
+	inject: { service },
+	Mixin
+} = Ember;
 
-        sw.on('newWaiting', () => {
-          window.alert('newWaiting');
-        });
-        sw.on('newActive', () => {
-          window.alert('newActive');
-        });
+/**
+ * The mixin for the application route to control service worker states
+ *
+ * @class ApplicationServiceWorkerMixin
+ * @extends Ember.Mixin
+ */
+export default Mixin.create({
 
-        sw.on('registrationComplete', () => window.alert('registrationComplete'));
-	    }
+	serviceWorker: service(),
+
+	/**
+	 * Mixin initialization
+	 *
+	 * @method init
+	 */
+	init() {
+		this._super(...arguments);
+
+		this._subscribeToSWEvents();
+	},
+
+	/**
+	 * Subscribe to session events
+	 *
+	 * @method _subscribeToSWEvents
+	 */
+	_subscribeToSWEvents() {
+		const sw = this.get('serviceWorker');
+
+		sw.on('newSWwaiting', (reg) => {
+			if (window.confirm('New version available! OK to refresh?')) {
+				sw.forceActivate(reg);
+			}
+		});
+		sw.on('newSWActive', () => {
+			window.location.reload();
+			console.log('New version installed');
+		});
+	}
+
+});
 
  ...
 ]
 ```
 
-### Debugging
+### Debugging sw build
 
- DEBUG=ember-cli:workbox
- TBW
+ DEBUG=ember-cli:workbox ember s
 
 
 ### Improvements TBD
