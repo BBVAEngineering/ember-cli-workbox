@@ -4,6 +4,7 @@ const path = require('path');
 const chalk = require('chalk');
 const Funnel = require('broccoli-funnel');
 const mergeTrees = require('broccoli-merge-trees');
+const prettyBytes = require('pretty-bytes');
 const workboxBuild = require('workbox-build');
 const workboxBuildPkg = require('workbox-build/package.json');
 const debug = require('debug')('ember-cli:workbox');
@@ -86,8 +87,9 @@ module.exports = {
 			removeDir(workboxDirectory);
 		}
 
-		return workboxBuild.generateSW(workboxOptions).then(() => {
+		return workboxBuild.generateSW(workboxOptions).then(({ count, size }) => {
 			debug(blue('Service worker successfully generated.'));
+			debug(blue(`${count} files will be precached, totalling ${prettyBytes(size)}.`));
 		}).catch((e) => {
 			debug(red(`Could not generate service Worker ${e.name}`));
 
