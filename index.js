@@ -51,7 +51,7 @@ module.exports = {
 			globDirectory: './',
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
 			skipWaiting: false,
-			clientsClaim: true,
+			clientsClaim: false,
 			importWorkboxFromCDN: false,
 			cacheId: projectName,
 			importScripts: ['assets/service-workers/skip-waiting.js']

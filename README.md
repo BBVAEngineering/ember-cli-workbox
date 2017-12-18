@@ -72,20 +72,22 @@ runtimeCaching: [{
 
 ServiceWorkerService triggers the following events:
 
-  - registrationComplete: sw successfully registered
-  - registrationError: sw not registered
-  - newSWActive: new sw controlling page
-  - newSWWaiting: new sw waiting for controlling page
-  - unregistrationComplete: all sw are unregistered
+  - `registrationComplete`: sw successfully registered
+  - `registrationError`: sw not registered
+  - `newSWActive`: new sw controlling page
+  - `newSWWaiting`: new sw waiting for controlling page
+  - `unregistrationComplete`: all sw are unregistered
 
-**Why or how to use this events?**
+**Why and how to use this events?**
 
 By default, users have to close all tabs to a site in order to update a Service Worker. The Refresh button is not enough.
 If you make a mistake here, users will see an outdated version of your site even after refreshing
-Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency.
-We can write code to notify users when a new version is available. 
+Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency. We can write code to notify users when a new version is available. 
 
-For example you could do it like this:
+This addon make it easy for you and implements [google recommendation](https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users)
+Basically, what you have to do is subscribing to the event "newSWWaiting". When event is triggered, send a message to sw in order to launch skipWaiting + clients.claim on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
+
+See this complete example for this implementation:
 
 ```JavaScript
 
@@ -116,15 +118,15 @@ export default Mixin.create({
 	init() {
 		this._super(...arguments);
 
-		this._subscribeToSWEvents();
+		this.subscribeToSWEvents();
 	},
 
 	/**
 	 * Subscribe to session events
 	 *
-	 * @method _subscribeToSWEvents
+	 * @method subscribeToSWEvents
 	 */
-	_subscribeToSWEvents() {
+	subscribeToSWEvents() {
 		const sw = this.get('serviceWorker');
 
 		sw.on('newSWwaiting', (reg) => {
