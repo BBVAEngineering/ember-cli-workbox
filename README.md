@@ -25,7 +25,7 @@ ENV['ember-cli-workbox'] = {
 };
 ```
 * **enabled** - (Boolean) Addon is enabled. Default to true on production builds
-* **debug** - (Boolean) Log addon activity TBD
+* **debug** - (Boolean) Log serviceworker states (registering, updating, etc)
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your environment.js file:
 
@@ -68,15 +68,28 @@ runtimeCaching: [{
 * **maximumFileSizeToCacheInBytes** - (number) This value can be used to determine the maximum size of files that will be precached
 * **more** - For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
 
-Subscribe to events:
+**Subscribe to events:**
+
+ServiceWorkerService triggers the following events:
+
+  - registrationComplete: sw successfully registered
+  - registrationError: sw not registered
+  - newSWActive: new sw controlling page
+  - newSWWaiting: new sw waiting for controlling page
+  - unregistrationComplete: all sw are unregistered
+
+**Why or how to use this events?**
 
 By default, users have to close all tabs to a site in order to update a Service Worker. The Refresh button is not enough.
 If you make a mistake here, users will see an outdated version of your site even after refreshing
 Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency.
 We can write code to notify users when a new version is available. 
+
 For example you could do it like this:
 
 ```JavaScript
+
+// <my-app>/mixins/service-worker-states.js
    
 import Ember from 'ember';
 
@@ -127,16 +140,24 @@ export default Mixin.create({
 
 });
 
- ...
-]
+// <my-app>/routes/application.js
+
+import ApplicationSwMixin from '<my-app>/mixins/service-worker-states';
+
+export default Route.extend(ApplicationSwMixin,{
+  ....
+} 
+
 ```
 
-### Debugging sw build
+### Debugging serviceWorker generation on build
 
- DEBUG=ember-cli:workbox ember s
+```
+$ DEBUG=ember-cli:workbox ember s
+```
 
 
-### Improvements TBD
+### Future improvements
 
 Ember-cli-workbox currently do not implement workboxBuild.injectManifest() feature, only works generating a new serviceworker.
 
