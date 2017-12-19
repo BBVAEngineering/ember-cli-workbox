@@ -86,6 +86,7 @@ module.exports = {
 
 		return cleanPromise.then(() =>
 			workboxBuild.generateSW(workboxOptions).then(({ count, size }) => {
+				console.log(directory);
 				debug(blue('Service worker successfully generated.'));
 				debug(blue(`${count} files will be precached, totalling ${prettyBytes(size)}.`));
 			})
