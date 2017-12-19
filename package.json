@@ -7,7 +7,7 @@
     "main": "index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha node-tests && ember test"
   },
   "repository": {
     "type": "git",
@@ -61,6 +61,10 @@
     "ember-source": "~2.14.1",
     "eslint": "^4.10.0",
     "eslint-config-bbva": "^2.0.0",
-    "loader.js": "^4.2.3"
+    "loader.js": "^4.2.3",
+    "mocha": "^4.0.1",
+    "broccoli-test-helpers": "0.0.9",
+    "chai": "^3.5.0",
+    "rimraf": "^2.5.3"
   }
 }
