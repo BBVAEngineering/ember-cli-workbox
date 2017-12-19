@@ -14,7 +14,7 @@ For more details on Workbox check out:
 `ember install ember-cli-workbox`
 
 ### Configuration
-By default the service worker will be generated only for production builds and the service worker will be registered on an initializer.
+
 If you need to customize **ember-cli-workbox configuration** you can do it like this:
 
 ```JavaScript
