@@ -1,14 +1,15 @@
 ember-cli-workbox
 =================
 
-Service worker generator with precaching and some basic configurable options using [workbox-build](https://www.npmjs.com/package/workbox-build).
+A plugin for your Ember-cli build process, giving your app offline caching as a progressive enhancement, using service workers. Ember-cli-workbox will add a service worker to your Ember App registering it on initial page load.
+
+This addon simplify service worker registration and caching, powered by [workbox-build](https://www.npmjs.com/package/workbox-build). Workbox library automate precaching of static resources (HTML, JavaScript, CSS, and images) and handle runtime caching and fallback strategies. It allowed us to implement a performant strategy in which a static content is always served directly from the cache, and dynamic or remote resources are served from the network, with fallbacks to cached or static responses when needed.
 
 For more details on Workbox check out:
 * [Workbox Google Developers](https://developers.google.com/web/tools/workbox/)
 * [Service Workers cookbook](https://serviceworke.rs/)
 
-Usage for Ember Cli
--------------------
+### Installation
 
 `ember install ember-cli-workbox`
 
@@ -66,9 +67,10 @@ runtimeCaching: [{
 ]
 ```
 * **maximumFileSizeToCacheInBytes** - (number) This value can be used to determine the maximum size of files that will be precached
-* **more** - For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
 
-**Subscribe to events:**
+> For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
+
+### Subscribing to events
 
 ServiceWorkerService triggers the following events:
 
@@ -84,8 +86,10 @@ By default, users have to close all tabs to a site in order to update a Service 
 If you make a mistake here, users will see an outdated version of your site even after refreshing
 Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency. We can write code to notify users when a new version is available. 
 
-This addon make it easy for you and implements [google recommendation](https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users)
-Basically, what you have to do is subscribing to the event "newSWWaiting". When event is triggered, send a message to sw in order to launch skipWaiting + clients.claim on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
+This addon make it easy for you and implements [google recommendation](https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users).
+Basically, what you have to do is subscribing to the event `newSWWaiting`. When event is triggered, send a message to sw in order to launch `skipWaiting + clients.claim` on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
+
+**Example of the event**
 
 See this complete example for this implementation:
 
@@ -95,9 +99,9 @@ See this complete example for this implementation:
    
 import Ember from 'ember';
 
-const {
-	inject: { service },
-	Mixin
+const { 
+  inject: { service },
+  Mixin
 } = Ember;
 
 /**
@@ -108,38 +112,35 @@ const {
  */
 export default Mixin.create({
 
-	serviceWorker: service(),
-
-	/**
-	 * Mixin initialization
-	 *
-	 * @method init
-	 */
-	init() {
-		this._super(...arguments);
-
-		this.subscribeToSWEvents();
-	},
-
-	/**
-	 * Subscribe to session events
-	 *
-	 * @method subscribeToSWEvents
-	 */
-	subscribeToSWEvents() {
-		const sw = this.get('serviceWorker');
-
-		sw.on('newSWwaiting', (reg) => {
-			if (window.confirm('New version available! OK to refresh?')) {
-				sw.forceActivate(reg);
-			}
-		});
-		sw.on('newSWActive', () => {
-			window.location.reload();
-			console.log('New version installed');
-		});
-	}
-
+  serviceWorker: service(), 
+ 
+  /**
+   * Mixin initialization
+   *
+   * @method init
+   */
+  init() {
+  	this._super(...arguments);  
+  	this.subscribeToSWEvents();
+  }, 
+ 
+  /**
+   * Subscribe to session events
+   *
+   * @method subscribeToSWEvents
+   */
+  subscribeToSWEvents() {
+  	const sw = this.get('serviceWorker');  
+  	sw.on('newSWwaiting', (reg) => {
+  		if (window.confirm('New version available! OK to refresh?')) {
+  			sw.forceActivate(reg);
+  		}
+  	});
+  	sw.on('newSWActive', () => {
+  		window.location.reload();
+  		console.log('New version installed');
+  	});
+  }  
 });
 
 // <my-app>/routes/application.js

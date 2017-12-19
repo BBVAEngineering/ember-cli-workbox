@@ -2,7 +2,7 @@
   "name": "ember-cli-workbox",
   "version": "0.0.1",
   "description": "Service worker generator with precaching and some basic configurable options using workbox-build",
-  "main": "lib/workbox.js",
+  "main": "index.js",
   "ember-addon": {
     "main": "index.js"
   },
@@ -20,7 +20,7 @@
     "manifest",
     "ember-addon"
   ],
-  "author": "Adrián González Rus",
+  "author": "BBVAEngineering",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/BBVAEngineering/ember-cli-workbox/issues"
@@ -30,11 +30,12 @@
     "node": "^4.5 || 6.* || >= 7.*"
   },
   "dependencies": {
-    "ember-cli-babel": "^6.3.0",
-    "workbox-build": "3.0.0-alpha.3",
     "broccoli-funnel": "^1.2.0",
     "broccoli-merge-trees": "^1.2.0",
-    "pretty-bytes": "^4.0.2"
+    "ember-cli-babel": "^6.3.0",
+    "pretty-bytes": "^4.0.2",
+    "rimraf": "^2.6.2",
+    "workbox-build": "3.0.0-alpha.3"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",

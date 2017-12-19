@@ -21,7 +21,7 @@ const { Service, computed, Evented, debug } = Ember;
 
 export default Service.extend(Evented, {
 
-	sw: computed(() => window.navigator.serviceWorker).volatile(),
+	sw: computed(() => window.navigator.serviceWorker),
 
 	isSupported: computed.bool('sw'),
 
