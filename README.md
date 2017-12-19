@@ -1,4 +1,4 @@
-ember-cli-workbox
+ember-cli-workbox [![Build Status](https://travis-ci.org/BBVAEngineering/ember-cli-workbox.svg?branch=master)](https://travis-ci.org/BBVAEngineering/ember-cli-workbox) [![GitHub version](https://badge.fury.io/gh/BBVAEngineering%2Fember-cli-workbox.svg)](https://badge.fury.io/gh/BBVAEngineering%2Fember-cli-workbox) [![Dependency Status](https://travis-ci.org/BBVAEngineering/ember-cli-workbox.svg)](https://travis-ci.org/BBVAEngineering/ember-cli-workbox)
 =================
 
 A plugin for your Ember-cli build process, giving your app offline caching as a progressive enhancement, using service workers. Ember-cli-workbox will add a service worker to your Ember App registering it on initial page load.
