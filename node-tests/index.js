@@ -12,7 +12,6 @@ describe('Acceptance Tests', function () {
 
 	context('A Simple App', function () {
 
-		console.log(fixturePath);
 
 		before(function () {
 			runEmberCommand(fixturePath, 'build');
@@ -61,7 +60,6 @@ function exists(filePath) {
 
 function contains(filePath, regexp) {
 	var fileContent = fs.readFileSync(filePath, 'utf8');
-	console.log(fileContent);
 
 	assert.ok(fileContent.match(regexp), filePath + ' contains ' + regexp);
 }
