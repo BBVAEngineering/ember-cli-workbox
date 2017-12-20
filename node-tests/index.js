@@ -14,11 +14,11 @@ describe('Acceptance Tests', function () {
 
 
 		before(function () {
-			runEmberCommand(fixturePath, 'build');
+			return runEmberCommand(fixturePath, 'build');
 		});
 
 		after(function () {
-			// cleanup(fixturePath);
+			cleanup(fixturePath);
 		});
 
 		it('produces a sw.js file', function () {
