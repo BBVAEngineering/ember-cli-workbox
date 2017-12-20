@@ -23,14 +23,16 @@ export default Controller.extend({
 	 */
 	subscribeToSWEvents() {
 		const sw = this.get('serviceWorker');
+		const states = this.get('states');
 
 		sw.on('newSWwaiting', (reg) => {
 			sw.forceActivate(reg);
+			states.pushObject('newSWwaiting');
 		});
 		sw.on('newSWActive', () => {
-			this.set('ServiceWorker activated');
+			states.pushObject('newSWActive');
 		});
 	},
 
-	text: 'Initial super text'
+	states: []
 });

@@ -1,4 +1,9 @@
 <h2 id="title">Welcome to Ember</h2>
 
-<p id="serviceWorkerState">{{text}}</p>
+<ul id="serviceWorkerState">
+	{{#each states as |state|}}
+		<li>{{state}}</li>
+	{{/each}}
+</ul>
+
 {{outlet}}
