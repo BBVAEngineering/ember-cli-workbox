@@ -72,7 +72,18 @@ runtimeCaching: [{
 
 ### Subscribing to events
 
-ServiceWorkerService triggers the following events:
+If you are using workbox with clientsClaim:true and skipWaiting:true your serviceWorker will became active automaticatly.
+In this case, if you want to force reload simply do this:
+
+```JavaScript
+navigator.serviceWorker.addEventListener('controllerchange', function(event) {
+  console.log('New service worker controlling page. You should reload to get new changes');
+  window.location.reload();
+});
+```
+
+But if you want to take control of what is the state of serviceWorker, don't activate clientsClaim and skipWaiting.
+The recomendation is using ServiceWorkerService that triggers the following events:
 
   - `registrationComplete`: sw successfully registered
   - `registrationError`: sw not registered
@@ -84,7 +95,7 @@ ServiceWorkerService triggers the following events:
 
 By default, users have to close all tabs to a site in order to update a Service Worker. The Refresh button is not enough.
 If you make a mistake here, users will see an outdated version of your site even after refreshing
-Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency. We can write code to notify users when a new version is available. 
+Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency. We can write code to notify users when a new version is available.
 
 This addon make it easy for you and implements [google recommendation](https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users).
 Basically, what you have to do is subscribing to the event `newSWWaiting`. When event is triggered, send a message to sw in order to launch `skipWaiting + clients.claim` on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
@@ -179,3 +190,7 @@ Sometimes you'll need more control over what is cached, strategies used and cust
 ### Contributing
 
 We're thankful to the community for contributing any improvements.
+
+### Dependencies
+
+"ember-cli-uglify": "^2.0.0",
