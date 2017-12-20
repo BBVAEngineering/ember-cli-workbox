@@ -3,6 +3,8 @@ language: node_js
 dist: trusty
 node_js:
   - "6"
+  - "7"
+  - "8"
 
 sudo: false
 
@@ -40,11 +42,8 @@ before_install:
   - google-chrome --version
 
 install:
-  - cd node-tests/fixtures/simple-app && npm install && bower install && cd -
-  - npm install
-  - bower install
+  - cd node-tests/fixtures/simple-app && yarn install && bower install && cd -
+  - yarn install
 
 script:
-  # Usually, it's ok to finish the test scenario without reverting
-  #  to the addon's original dependency state, skipping "cleanup".
   - npm run test
