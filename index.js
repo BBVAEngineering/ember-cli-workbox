@@ -1,15 +1,7 @@
 /* eslint-disable no-sync */
-const fs = require('fs');
-const path = require('path');
-const chalk = require('chalk');
 const Funnel = require('broccoli-funnel');
 const mergeTrees = require('broccoli-merge-trees');
-const rimraf = require('rimraf');
-const prettyBytes = require('pretty-bytes');
-const workboxBuild = require('workbox-build');
-const workboxBuildPkg = require('workbox-build/package.json');
-const debug = require('debug')('ember-cli:workbox');
-const { red, blue, yellow } = chalk;
+const BroccoliWorkbox = require('./lib/broccoli-workbox');
 
 function mergeOptions(options, defaultOptions) {
 	for (const option in defaultOptions) {
@@ -19,17 +11,6 @@ function mergeOptions(options, defaultOptions) {
 	}
 
 	return options;
-}
-
-function cleanDir(directory) {
-	return new Promise((resolve, reject) =>
-		rimraf(directory, (err, result) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(result);
-		})
-	);
 }
 
 module.exports = {
@@ -64,36 +45,18 @@ module.exports = {
 		this.workboxOptions = workboxOptions;
 	},
 
-	postBuild({ directory }) {
-		const workboxOptions = Object.assign({}, this.workboxOptions);
-
-		if (!this.options.enabled) {
-			debug(yellow('Addon disabled. Generating empty service worker...'));
-			workboxOptions.globPatterns = [];
-			workboxOptions.runtimeCaching = [];
+	postprocessTree(type, tree) {
+		if (type !== 'all') {
+			return tree;
 		}
 
-		workboxOptions.globDirectory = path.join(directory, workboxOptions.globDirectory);
-		workboxOptions.swDest = path.join(directory, workboxOptions.swDest);
+		const workboxFunnel = new BroccoliWorkbox([tree], {
+			options: this.options,
+			workboxOptions: this.workboxOptions
+		});
 
-		let cleanPromise = Promise.resolve();
-		const workboxDirectory = path.join(directory, `workbox-v${workboxBuildPkg.version}`);
-
-		// Remove workbox libraries directory to prevent exception on recopying it.
-		if (!workboxOptions.importWorkboxFromCDN && fs.existsSync(workboxDirectory)) {
-			cleanPromise = cleanDir(workboxDirectory);
-		}
-
-		return cleanPromise.then(() =>
-			workboxBuild.generateSW(workboxOptions).then(({ count, size }) => {
-				console.log(directory);
-				debug(blue('Service worker successfully generated.'));
-				debug(blue(`${count} files will be precached, totalling ${prettyBytes(size)}.`));
-			})
-		).catch((e) => {
-			debug(red(`Could not generate service Worker ${e.name}`));
-
-			throw Error(e);
+		return mergeTrees([tree, workboxFunnel], {
+			overwrite: true
 		});
 	},
 
