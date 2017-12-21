@@ -1,52 +1,52 @@
-var assert = require('chai').assert;
-var fs = require('fs');
-var path = require('path');
-var rimraf = require('rimraf').sync;
-var exec = require('child_process').exec;
+const assert = require('chai').assert;
+const fs = require('fs');
+const path = require('path');
+const rimraf = require('rimraf').sync;
+const exec = require('child_process').exec;
 
-var emberCLIPath = path.resolve(__dirname, './fixtures/simple-app/node_modules/ember-cli/bin/ember');
-var fixturePath = path.resolve(__dirname, './fixtures/simple-app');
+const TEST_TIMEOUT = 120000;
+const emberCLIPath = path.resolve(__dirname, './fixtures/simple-app/node_modules/ember-cli/bin/ember');
+const fixturePath = path.resolve(__dirname, './fixtures/simple-app');
+const outputSWPath = outputFilePath('sw.js');
 
-describe('Addon is enabled for production build', function () {
-	this.timeout(120000);
+describe('Addon is enabled for production build', function() {
+	this.timeout(TEST_TIMEOUT);
 
 	context('Precaches and register serviceworker', () => {
-
 		before(() => runEmberCommand(fixturePath, 'build --prod'));
 
 		after(() => cleanup(fixturePath));
 
 		it('produces a sw.js file', () => {
-			exists(outputFilePath('sw.js'));
+			existFile(outputSWPath);
 		});
 
 		it('precaches assets', () => {
-			contains(outputFilePath('sw.js'), /assets\/simple-app-\w\.js/);
+			contains(outputFilePath('sw.js'), /assets\/simple-app\.js/);
 		});
 
 		it('produces a sw skip waiting file, which is imported on sw.js', () => {
-			exists(outputFilePath('assets/service-workers/skip-waiting.js'));
-			contains(outputFilePath('sw.js'), /skip-waiting\.js/);
+			existFile(outputFilePath('assets/service-workers/skip-waiting.js'));
+			contains(outputSWPath, /"assets\/service-workers\/skip-waiting.js"/);
 		});
 	});
 });
 
 
-describe('Addon is disabled for development', function () {
-	this.timeout(120000);
+describe('Addon is disabled for development', function() {
+	this.timeout(TEST_TIMEOUT);
 
 	context('Precaches nothing and register serviceworker', () => {
-
 		before(() => runEmberCommand(fixturePath, 'build'));
 
 		after(() => cleanup(fixturePath));
 
 		it('produces a sw.js file', () => {
-			exists(outputFilePath('sw.js'));
+			existFile(outputSWPath);
 		});
 
 		it('precaches nothing', () => {
-			contains(outputFilePath('sw.js'), /precacheManifest\s\=\s\[\]/);
+			contains(outputSWPath, /precacheManifest\s\=\s\[\]/);
 		});
 	});
 });
@@ -73,15 +73,12 @@ function outputFilePath(file) {
 	return path.join(fixturePath, 'dist', file);
 }
 
-function exists(filePath) {
+function existFile(filePath) {
 	assert.ok(fs.existsSync(filePath), filePath + ' exists');
 }
 
 function contains(filePath, regexp) {
-	var fileContent = fs.readFileSync(filePath, 'utf8');
+	const fileContent = fs.readFileSync(filePath, 'utf8');
 
-	console.log(fileContent);
-	console.log(fileContent.match(regexp));
-
-	assert.ok(fileContent.match(regexp), filePath + ' contains ' + regexp);
+	assert.ok(fileContent.match(regexp), `${filePath} contains ${regexp}`);
 }
