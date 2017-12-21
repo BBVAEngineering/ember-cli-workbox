@@ -22,7 +22,12 @@ describe('Addon is enabled for production build', function() {
 		});
 
 		it('precaches assets', () => {
-			contains(outputFilePath('sw.js'), /assets\/simple-app\.js/);
+			contains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
+			contains(outputFilePath('sw.js'), /assets\/simple-app\.[css|js]/);
+			contains(outputFilePath('sw.js'), /vendor\.[css|js]/);
+			contains(outputFilePath('sw.js'), /crossdomain\.xml/);
+			contains(outputFilePath('sw.js'), /index\.html/);
+			contains(outputFilePath('sw.js'), /robots\.txt/);
 		});
 
 		it('produces a sw skip waiting file, which is imported on sw.js', () => {
