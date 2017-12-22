@@ -16,6 +16,8 @@ export default Controller.extend({
 		this.subscribeToSWEvents();
 	},
 
+	states: [],
+
 	/**
 	 * Subscribe to session events
 	 *
@@ -25,14 +27,15 @@ export default Controller.extend({
 		const sw = this.get('serviceWorker');
 		const states = this.get('states');
 
+		sw.on('registrationComplete', () => {
+			this.set('states', states.push('registrationComplete'));
+		});
 		sw.on('newSWwaiting', (reg) => {
 			sw.forceActivate(reg);
-			states.pushObject('newSWwaiting');
+			this.set('states', states.push('newSWwaiting'));
 		});
 		sw.on('newSWActive', () => {
-			states.pushObject('newSWActive');
+			this.set('states', states.push('newSWActive'));
 		});
-	},
-
-	states: []
+	}
 });
