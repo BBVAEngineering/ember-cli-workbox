@@ -36,9 +36,11 @@ export default Service.extend(Evented, {
 	register(swFile) {
 		this._watchUpdates();
 
-		return this.get('sw').register(swFile).then(this._onRegistration.bind(this)).catch((err) => {
-			this.trigger('registrationError');
-			this._log('Service Worker registration failed: ', err);
+		return this.get('sw').register(swFile).then(this._onRegistration.bind(this)).catch((error) => {
+			this.trigger('registrationError', error);
+			this._log('Service Worker registration failed: ', error);
+
+			throw error;
 		});
 	},
 
