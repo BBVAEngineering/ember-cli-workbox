@@ -14,21 +14,37 @@ moduleForAcceptance('Acceptance | Simple Acceptance Test', {
 	}
 });
 
-test('Page load serviceWorker correctly', (assert) => {
+test('SW captures registration errors', (assert) => {
 	visit('/');
-	assert.expect(2);
 
 	const done = assert.async();
 
-	andThen(() => {
-		run.later(() => {
-			assert.equal(find('#serviceWorkerState li').length, 3);
-			done();
-		}, 20000);
+	serviceWorkerService.on('registrationError', (error) => {
+		assert.ok(error, 'Service worker triggers "registrationError" event');
+		done();
 	});
 });
 
+// test('Page load serviceWorker correctly', (assert) => {
+// 	visit('/');
+// 	assert.expect(2);
 
-test('ServiceWorker is not registered if it is not supported', (assert) => {
-	assert.ok(true);
-});
+// 	const done = assert.async();
+
+// 	serviceWorkerService.on('registrationComplete', () => {
+// 		assert.ok(window.navigator.serviceWorker.controller, 'Service worker exists');
+// 		done();
+// 	});
+
+// 	andThen(() => {
+// 		// run.later(() => {
+// 			// assert.ok(window.navigator.serviceWorker.controller, 'Service worker exists');
+// 			// done();
+// 		// }, 20000);
+// 	});
+// });
+
+
+// test('ServiceWorker is not registered if it is not supported', (assert) => {
+// 	assert.ok(true);
+// });
