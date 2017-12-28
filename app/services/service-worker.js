@@ -39,6 +39,8 @@ export default Service.extend(Evented, {
 		return this.get('sw').register(swFile).then(this._onRegistration.bind(this)).catch((error) => {
 			this.trigger('registrationError', error);
 			this._log('Service Worker registration failed: ', error);
+
+			throw error;
 		});
 	},
 
