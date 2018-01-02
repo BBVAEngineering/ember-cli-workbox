@@ -34,7 +34,9 @@ module.exports = {
 			importScripts: ['assets/service-workers/skip-waiting.js']
 		});
 
-		const isProdBuild = env === 'production';
+		env = env || process.env.EMBER_ENV;
+
+		const isProdBuild = env.match('prod');
 
 		mergeOptions(options, {
 			enabled: isProdBuild,
