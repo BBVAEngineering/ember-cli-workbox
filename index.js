@@ -36,6 +36,11 @@ module.exports = {
 
 		env = env || process.env.EMBER_ENV;
 
+		// Do nothing if no ENV. For example, when running an ember generator.
+		if (!env) {
+			return;
+		}
+
 		const isProdBuild = env.match('prod');
 
 		mergeOptions(options, {
