@@ -14,8 +14,9 @@ const { Service, computed, Evented, debug } = Ember;
 *  Events triggered:
 * 		registrationComplete: sw successfully registered
 *		registrationError: sw not registered
-*		newSWActive: new sw controlling page
-* 		newSWWaiting: new sw waiting for controlling page
+*		activated: new sw controlling page
+* 		waiting: new sw waiting for controlling page
+* 		updated: updated sw controlling page, need refresh
 *		unregistrationComplete: all sw are unregistered
 */
 
@@ -88,7 +89,7 @@ export default Service.extend(Evented, {
 		if (reg.waiting) {
 			// SW is waiting to activate. Can occur if multiple clients open and
 			// one of the clients is refreshed.
-			this._newSWwaiting(reg);
+			this._waiting(reg);
 			return;
 		}
 		if (reg.installing) {
@@ -106,16 +107,34 @@ export default Service.extend(Evented, {
 	*/
 	_awaitStateChange(reg) {
 		reg.installing.addEventListener('statechange', (event) => {
-			if (event.target.state === 'installed') {
-				// A new service worker is available, inform the user
-				this._newSWwaiting(reg);
+			switch (event.target.state) {
+				case 'installed':
+					if (navigator.serviceWorker.controller) {
+						// At this point, the old content will have been purged and the fresh content will
+						// have been added to the cache.
+						// It's the perfect time to display a "New content is available; please refresh."
+						// message in the page's interface.
+						this._waiting(reg);
+					} else {
+						// At this point, everything has been precached.
+						// It's the perfect time to display a "Content is cached for offline use." message.
+						this._log('New serviceworker is controlling page. Content is now available offline!');
+						this.trigger('activated');
+					}
+					break;
+
+				case 'redundant':
+					this._log('The installing service worker became redundant.');
+					break;
+				default:
+					break;
 			}
 		});
 	},
 
-	_newSWwaiting(reg) {
-		this._log('New service worker is waiting to activate');
-		this.trigger('newSWwaiting', reg);
+	_waiting(reg) {
+		this._log('New serviceworker is waiting to activate. New or updated content is available.');
+		this.trigger('waiting', reg);
 	},
 
 	/*
@@ -126,8 +145,8 @@ export default Service.extend(Evented, {
 	_watchUpdates() {
 		this.get('sw').addEventListener('message', ({ data }) => {
 			if (data === 'reload-window') {
-				this.trigger('newSWActive');
-				this._log('New service worker controlling page. You should reload');
+				this.trigger('updated');
+				this._log('New serviceworker controlling page. You should reload');
 			}
 		});
 	}
