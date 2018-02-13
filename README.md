@@ -90,11 +90,12 @@ navigator.serviceWorker.addEventListener('controllerchange', function(event) {
 But if you want to take control of what is the state of serviceWorker, do not activate clientsClaim and skipWaiting.
 The recomendation is using ServiceWorkerService that triggers the following events:
 
-- `registrationComplete`: sw successfully registered
-- `registrationError`: sw not registered
-- `newSWActive`: new sw controlling page
-- `newSWWaiting`: new sw waiting for controlling page
-- `unregistrationComplete`: all sw are unregistered
+- registrationComplete: sw successfully registered
+- registrationError: sw not registered
+- activated: new sw controlling page
+- waiting: new sw waiting for controlling page
+- updated: updated sw controlling page, need refresh
+- unregistrationComplete: all sw are unregistered
 
 ### Why and how to use this events?
 
@@ -103,7 +104,7 @@ If you make a mistake here, users will see an outdated version of your site even
 Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency. We can write code to notify users when a new version is available.
 
 This addon make it easy for you and implements [google recommendation](https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users).
-Basically, what you have to do is subscribing to the event `newSWWaiting`. When event is triggered, send a message to sw in order to launch `skipWaiting + clients.claim` on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
+Basically, what you have to do is subscribing to the event `waiting`. When event is triggered, send a message to sw in order to launch `skipWaiting + clients.claim` on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
 
 **Example of the event**
 
@@ -145,13 +146,16 @@ export default Mixin.create({
    * @method subscribeToSWEvents
    */
   subscribeToSWEvents() {
-  	const sw = this.get('serviceWorker');  
-  	sw.on('newSWwaiting', (reg) => {
+    const sw = this.get('serviceWorker'); 
+    sw.on('activated', (reg) => {
+      window.alert('Content is now available offline!')
+  	});
+  	sw.on('waiting', (reg) => {
   		if (window.confirm('New version available! OK to refresh?')) {
   			sw.forceActivate(reg);
   		}
   	});
-  	sw.on('newSWActive', () => {
+  	sw.on('updated', () => {
   		window.location.reload();
   		console.log('New version installed');
   	});
