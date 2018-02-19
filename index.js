@@ -29,9 +29,8 @@ module.exports = {
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
 			skipWaiting: false,
 			clientsClaim: false,
-			importWorkboxFromCDN: false,
-			cacheId: projectName,
-			importScripts: ['assets/service-workers/skip-waiting.js']
+			importWorkboxFrom: 'local',
+			cacheId: projectName
 		});
 
 		env = env || process.env.EMBER_ENV;

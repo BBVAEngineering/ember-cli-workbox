@@ -37,7 +37,8 @@
     "ember-cli-babel": "^6.3.0",
     "pretty-bytes": "^4.0.2",
     "rimraf": "^2.6.2",
-    "workbox-build": "3.0.0-alpha.3"
+    "workbox-build": "3.0.0-beta.0",
+    "glob": "^7.1.2"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
