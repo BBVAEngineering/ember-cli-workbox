@@ -73,6 +73,7 @@ runtimeCaching: [{
 ]
 ```
 
+Note that importScripts parameter is overriden by this addon to include all js files on `/public/assets/service-workers/*` folder
 > For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
 
 ## Subscribing to events
