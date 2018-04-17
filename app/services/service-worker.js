@@ -24,7 +24,17 @@ export default Service.extend(Evented, {
 
 	sw: computed(() => window.navigator.serviceWorker),
 
-	isSupported: computed.bool('sw'),
+	isSupported: computed('sw', function () {
+		const sw = this.get('sw');
+
+		if (sw) {
+			const swFeatures = ['getRegistrations', 'register'];
+
+			return swFeatures.every((func) => func in sw);
+		}
+
+		return false;
+	}),
 
 	debug: false,
 
