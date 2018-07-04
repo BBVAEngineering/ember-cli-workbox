@@ -3,28 +3,27 @@ import Ember from 'ember';
 const { Service, computed, Evented, debug } = Ember;
 
 /*
-*
-* Service worker states:
-*    "installing" - the install event has fired, but not yet complete
-*    "installed"  - install complete
-*    "activating" - the activate event has fired, but not yet complete
-*    "activated"  - fully active
-*    "redundant"  - discarded. Either failed install, or it's been
-*                   replaced by a newer version
-*  Events triggered:
-* 		registrationComplete: sw successfully registered
-*		registrationError: sw not registered
-*		activated: new sw controlling page
-* 		waiting: new sw waiting for controlling page
-* 		updated: updated sw controlling page, need refresh
-*		unregistrationComplete: all sw are unregistered
-*/
-
+ *
+ * Service worker states:
+ *	"installing"				- the install event has fired, but is not yet completed
+ *	"installed"					- install completed
+ *	"activating"				- the activate event has fired, but is not yet completed
+ *	"activated"					- fully active
+ *	"redundant"					- discarded. Either failed install, or it's been replaced by a newer version
+ *
+ * Events triggered:
+ *	"registrationComplete"		- sw successfully registered
+ *	"registrationError"			- sw not registered
+ *	"activated"					- new sw controlling page
+ *	"waiting"					- new sw waiting for controlling page
+ *	"updated"					- updated sw controlling page, need refresh
+ *	"unregistrationComplete"	- all sw are unregistered
+ */
 export default Service.extend(Evented, {
 
 	sw: computed(() => window.navigator.serviceWorker),
 
-	isSupported: computed('sw', function () {
+	isSupported: computed('sw', function() {
 		const sw = this.get('sw');
 
 		if (sw) {
@@ -56,9 +55,9 @@ export default Service.extend(Evented, {
 	},
 
 	/*
-	* Utility function that unregisters SW, but you still need to reload to see SW removed completely
-	* This does not delete items in Cache
-	*/
+	 * Utility function that unregisters SW, but you still need to reload to see SW removed completely
+	 * This does not delete items in Cache
+	 */
 	unregisterAll() {
 		return this.get('sw').getRegistrations().then((registrations) =>
 			Promise.all(
@@ -79,9 +78,9 @@ export default Service.extend(Evented, {
 	},
 
 	/*
-	* Send message to sw in order to launch skipWaiting and clients.claim on it
-	* New sw will become active
-	*/
+	 * Send message to sw in order to launch skipWaiting and clients.claim on it
+	 * New sw will become active
+	 */
 	forceActivate(reg) {
 		this._log('Forcing serviceWorker to activate');
 		reg.waiting.postMessage('force-activate');
@@ -113,8 +112,8 @@ export default Service.extend(Evented, {
 	},
 
 	/*
-	* Listen for further changes to the new service worker's state.
-	*/
+	 * Listen for further changes to the new service worker's state.
+	 */
 	_awaitStateChange(reg) {
 		reg.installing.addEventListener('statechange', (event) => {
 			switch (event.target.state) {
@@ -148,10 +147,10 @@ export default Service.extend(Evented, {
 	},
 
 	/*
-	* This fires when the service worker controlling this page
-	* changes, eg a new worker has as skipped waiting and become
-	* the new active worker. (Notfiy new version installed)
-	*/
+	 * This fires when the service worker controlling this page
+	 * changes, eg a new worker has as skipped waiting and become
+	 * the new active worker. (Notfiy new version installed)
+	 */
 	_watchUpdates() {
 		this.get('sw').addEventListener('message', ({ data }) => {
 			if (data === 'reload-window') {
