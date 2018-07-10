@@ -21,6 +21,8 @@ const { Service, computed, Evented, debug } = Ember;
  */
 export default Service.extend(Evented, {
 
+	caches: computed(() => window.caches),
+
 	sw: computed(() => window.navigator.serviceWorker),
 
 	isSupported: computed('sw', function() {
@@ -74,6 +76,19 @@ export default Service.extend(Evented, {
 		).then(() => {
 			this.trigger('unregistrationComplete');
 			this._log('Unregistrations complete');
+		});
+	},
+
+	/*
+	 * Delete caches
+	 */
+	purgeCache() {
+		const _caches = this.get('caches');
+
+		return _caches.keys().then((cacheNames = []) => {
+			cacheNames.forEach((name) => {
+				_caches.delete(name);
+			});
 		});
 	},
 

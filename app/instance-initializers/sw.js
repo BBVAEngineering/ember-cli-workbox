@@ -18,7 +18,13 @@ export function initialize(appInstance) {
 		if (isEnabled) {
 			swService.register(swDestFile);
 		} else {
-			swService.unregisterAll();
+			swService.unregisterAll().then(() => {
+				const purgeOnDisable = getWithDefault(config, 'ember-cli-workbox.purgeOnDisable', false);
+
+				if (purgeOnDisable) {
+					swService.purgeCache();
+				}
+			});
 		}
 	} else {
 		debug('Service workers are not supported in this browser.');
