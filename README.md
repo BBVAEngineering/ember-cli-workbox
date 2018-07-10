@@ -25,12 +25,14 @@ If you need to customize **ember-cli-workbox configuration** you can do it like 
 
 ENV['ember-cli-workbox'] = {
   enabled: environment !== 'test',
-  debug: true
+  debug: true,
+  purgeOnDisable: true
 };
 ```
 
 - `enabled` - (Boolean) Addon is enabled. Default to true on production builds
 - `debug` - (Boolean) Log serviceworker states (registering, updating, etc)
+- `purgeOnDisable` - (Boolean) If the addon is disabled, purges the cache. Defaults to `false`
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your environment.js file:
 
@@ -113,10 +115,10 @@ See this complete example for this implementation:
 
 ```javascript
 // <my-app>/mixins/service-worker-states.js
-   
+
 import Ember from 'ember';
 
-const { 
+const {
   inject: { service },
   Mixin
 } = Ember;
@@ -129,25 +131,25 @@ const {
  */
 export default Mixin.create({
 
-  serviceWorker: service(), 
- 
+  serviceWorker: service(),
+
   /**
    * Mixin initialization
    *
    * @method init
    */
   init() {
-  	this._super(...arguments);  
+  	this._super(...arguments);
   	this.subscribeToSWEvents();
-  }, 
- 
+  },
+
   /**
    * Subscribe to session events
    *
    * @method subscribeToSWEvents
    */
   subscribeToSWEvents() {
-    const sw = this.get('serviceWorker'); 
+    const sw = this.get('serviceWorker');
     sw.on('activated', (reg) => {
       window.alert('Content is now available offline!')
   	});
@@ -160,7 +162,7 @@ export default Mixin.create({
   		window.location.reload();
   		console.log('New version installed');
   	});
-  }  
+  }
 });
 ```
 
@@ -171,7 +173,7 @@ import ApplicationSwMixin from '<my-app>/mixins/service-worker-states';
 
 export default Route.extend(ApplicationSwMixin,{
   ....
-} 
+}
 ```
 
 ## Prevent caching lazy engines

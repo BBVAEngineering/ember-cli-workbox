@@ -1,13 +1,11 @@
-import Ember from 'ember';
-
-const { getWithDefault, debug } = Ember;
+import { get } from '@ember/object';
+import { warn } from '@ember/debug';
 
 export function initialize(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
-	const isProdBuild = config.environment === 'production';
-	const isEnabled = getWithDefault(config, 'ember-cli-workbox.enabled', isProdBuild);
-	const debugAddon = getWithDefault(config, 'ember-cli-workbox.debug', !isProdBuild);
-	const swDestFile = getWithDefault(config, 'workbox.swDest', 'sw.js');
+	const isEnabled = get(config, 'ember-cli-workbox.enabled');
+	const debugAddon = get(config, 'ember-cli-workbox.debug');
+	const swDestFile = get(config, 'workbox.swDest');
 	const swService = appInstance.lookup('service:service-worker');
 
 	swService.set('debug', debugAddon);
@@ -18,10 +16,16 @@ export function initialize(appInstance) {
 		if (isEnabled) {
 			swService.register(swDestFile);
 		} else {
-			swService.unregisterAll();
+			swService.unregisterAll().then(() => {
+				const purgeOnDisable = get(config, 'ember-cli-workbox.purgeOnDisable');
+
+				if (purgeOnDisable) {
+					swService.purgeCache();
+				}
+			});
 		}
 	} else {
-		debug('Service workers are not supported in this browser.');
+		warn('Service workers are not supported in this browser.');
 	}
 }
 
