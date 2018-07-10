@@ -54,3 +54,14 @@ test('it unregisters sw', function(assert) {
 	});
 });
 
+test('it purges caches', function(assert) {
+	const _caches = this.swService.get('caches');
+
+	return _caches.open('dummy').then(() =>
+		this.swService.purgeCache()
+	).then(() =>
+		_caches.keys()
+	).then((keys) => {
+		assert.notOk(keys.length, 'Cache purged');
+	});
+});
