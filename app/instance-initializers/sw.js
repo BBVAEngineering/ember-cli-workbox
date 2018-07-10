@@ -4,10 +4,9 @@ const { getWithDefault, debug } = Ember;
 
 export function initialize(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
-	const isProdBuild = config.environment === 'production';
-	const isEnabled = getWithDefault(config, 'ember-cli-workbox.enabled', isProdBuild);
-	const debugAddon = getWithDefault(config, 'ember-cli-workbox.debug', !isProdBuild);
-	const swDestFile = getWithDefault(config, 'workbox.swDest', 'sw.js');
+	const isEnabled = get(config, 'ember-cli-workbox.enabled');
+	const debugAddon = get(config, 'ember-cli-workbox.debug');
+	const swDestFile = get(config, 'workbox.swDest');
 	const swService = appInstance.lookup('service:service-worker');
 
 	swService.set('debug', debugAddon);
@@ -19,7 +18,7 @@ export function initialize(appInstance) {
 			swService.register(swDestFile);
 		} else {
 			swService.unregisterAll().then(() => {
-				const purgeOnDisable = getWithDefault(config, 'ember-cli-workbox.purgeOnDisable', false);
+				const purgeOnDisable = get(config, 'ember-cli-workbox.purgeOnDisable');
 
 				if (purgeOnDisable) {
 					swService.purgeCache();

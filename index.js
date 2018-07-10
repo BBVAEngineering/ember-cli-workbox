@@ -44,7 +44,8 @@ module.exports = {
 
 		mergeOptions(options, {
 			enabled: isProdBuild,
-			debug: !isProdBuild
+			debug: !isProdBuild,
+			purgeOnDisable: false
 		});
 
 		this.options = options;
