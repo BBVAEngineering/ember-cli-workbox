@@ -1,6 +1,5 @@
-import Ember from 'ember';
-
-const { getWithDefault, debug } = Ember;
+import { get } from '@ember/object';
+import { warn } from '@ember/debug';
 
 export function initialize(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
@@ -26,7 +25,7 @@ export function initialize(appInstance) {
 			});
 		}
 	} else {
-		debug('Service workers are not supported in this browser.');
+		warn('Service workers are not supported in this browser.');
 	}
 }
 
