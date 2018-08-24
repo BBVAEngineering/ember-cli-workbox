@@ -25,12 +25,16 @@ If you need to customize **ember-cli-workbox configuration** you can do it like 
 
 ENV['ember-cli-workbox'] = {
   enabled: environment !== 'test',
-  debug: true
+  debug: true,
+  autoRegister: true
 };
 ```
 
-- `enabled` - (Boolean) Addon is enabled. Default to true on production builds
-- `debug` - (Boolean) Log serviceworker states (registering, updating, etc)
+| Property       | Type      | Description                                                    |
+|:--------------:|:---------:|:--------------------------------------------------------------:|
+| `enabled`      | `Boolean` | Addon is enabled. Default to true on production builds         |
+| `debug`        | `Boolean` | Log serviceworker states (registering, updating, etc)          |
+| `autoRegister` | `Boolean` | Enable the sw registration before initializing the application |
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your environment.js file:
 
@@ -45,15 +49,16 @@ ENV['workbox'] = {
 };
 ```
 
-- `swDest`: The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: './sw.js'
-- `globPatterns`: Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match `**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}`
-- `globDirectory`: The base directory you wish to match globPatterns against, related to the build directory. Default  './'
-- `globIgnores`: Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns.
-E.g. globIgnores: ['**\/ignored.html']
-- `templatedUrls`: If a URL is rendered generated based on some server-side logic, its contents may depend on multiple files or on some other unique string value.
-- `cacheId`: An optional ID to be prepended to caches used by workbox-sw. This is primarily useful for local development where multiple sites may be served from the same http://localhost origin. Defaults to your app name (config.APP.name).
-- `maximumFileSizeToCacheInBytes`: This value can be used to determine the maximum size of files that will be precached
-- `runtimeCaching`: Passing in an array of objects containing urlPatterns, handlers, and potentially options that will add the appropriate code to the generated service worker to handle runtime caching. The handler values correspond the names of the [strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-sw.Strategies) supported by workbox-sw (cacheFirst, cacheOnly, networkFirst, networkOnly, staleWhileRevalidate)
+| Property                        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|:-------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| `swDest`                        | The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: `./sw.js`                                                                                                                                                                                                                                                                                                           |
+| `globPatterns`                  | Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match `**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}`                                                                                                                                                                                                                     |
+| `globDirectory`                 | The base directory you wish to match globPatterns against, related to the build directory. Default  './'                                                                                                                                                                                                                                                                                                                                                |
+| `globIgnores`                   | Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns (E.g. globIgnores: ['**\/ignored.html'])                                                                                                                                                                                                                                                                            |
+| `templatedUrls`                 | If a URL is rendered generated based on some server-side logic, its contents may depend on multiple files or on some other unique string value.                                                                                                                                                                                                                                                                                                         |
+| `cacheId`                       | An optional ID to be prepended to caches used by workbox-sw. This is primarily useful for local development where multiple sites may be served from the same http://localhost origin. Defaults to your app name (config.APP.name).                                                                                                                                                                                                                      |
+| `maximumFileSizeToCacheInBytes` | This value can be used to determine the maximum size of files that will be precached                                                                                                                                                                                                                                                                                                                                                                    |
+| `runtimeCaching`                | Passing in an array of objects containing urlPatterns, handlers, and potentially options that will add the appropriate code to the generated service worker to handle runtime caching. The handler values correspond the names of the [strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-sw.Strategies) supported by workbox-sw (cacheFirst, cacheOnly, networkFirst, networkOnly, staleWhileRevalidate) |
 
 ```javascript
 runtimeCaching: [{
