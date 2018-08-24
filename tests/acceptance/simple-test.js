@@ -1,8 +1,5 @@
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 import { test } from 'qunit';
-import Ember from 'ember';
-
-const { run } = Ember;
 
 moduleForAcceptance('Acceptance | Simple Acceptance Test', {
 	beforeEach() {
@@ -12,8 +9,8 @@ moduleForAcceptance('Acceptance | Simple Acceptance Test', {
 		this.swService.set('isSupported', false);
 
 		this.swService.on('registrationComplete', () =>	this.events.push('registrationComplete'));
-		this.swService.on('unregistrationComplete', () =>	this.events.push('unregistrationComplete'));
-		this.swService.on('registrationError', () =>	this.events.push('registrationError'));
+		this.swService.on('unregistrationComplete', () => this.events.push('unregistrationComplete'));
+		this.swService.on('registrationError', () => this.events.push('registrationError'));
 		// this.swService.on('newSWwaiting', () => this.events.push('newSWwaiting'));
 		// this.swService.on('newSWActive', () => this.events.push('newSWActive'));
 	},
