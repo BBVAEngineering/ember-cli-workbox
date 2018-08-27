@@ -2,13 +2,21 @@ import Ember from 'ember';
 
 const { getWithDefault, debug } = Ember;
 
-export function initialize(appInstance) {
+export function getConfig(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
 	const isProdBuild = config.environment === 'production';
-	const isEnabled = getWithDefault(config, 'ember-cli-workbox.enabled', isProdBuild);
-	const debugAddon = getWithDefault(config, 'ember-cli-workbox.debug', !isProdBuild);
-	const swDestFile = getWithDefault(config, 'workbox.swDest', 'sw.js');
+
+	return {
+		isEnabled: getWithDefault(config, 'ember-cli-workbox.enabled', isProdBuild),
+		debugAddon: getWithDefault(config, 'ember-cli-workbox.debug', !isProdBuild),
+		swDestFile: getWithDefault(config, 'workbox.swDest', 'sw.js'),
+		autoRegister: getWithDefault(config, 'ember-cli-workbox.autoRegister', true)
+	};
+}
+
+export function initialize(appInstance) {
 	const swService = appInstance.lookup('service:service-worker');
+	const { isEnabled, debugAddon, swDestFile } = getConfig(appInstance);
 
 	swService.set('debug', debugAddon);
 
@@ -27,5 +35,11 @@ export function initialize(appInstance) {
 
 export default {
 	name: 'ember-cli-workbox',
-	initialize
+	initialize(appInstance) {
+		const { autoRegister } = getConfig(appInstance);
+
+		if (autoRegister) {
+			initialize(appInstance);
+		}
+	}
 };
