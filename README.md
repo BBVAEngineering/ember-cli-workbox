@@ -8,7 +8,8 @@ For more details on Workbox check out:
 * [Workbox Google Developers](https://developers.google.com/web/tools/workbox/)
 * [Service Workers cookbook](https://serviceworke.rs/)
 
-## Installation
+Installation
+------------------------------------------------------------------------------
 
 `ember install ember-cli-workbox`
 
@@ -118,10 +119,10 @@ See this complete example for this implementation:
 
 ```javascript
 // <my-app>/mixins/service-worker-states.js
-   
+
 import Ember from 'ember';
 
-const { 
+const {
   inject: { service },
   Mixin
 } = Ember;
@@ -134,25 +135,25 @@ const {
  */
 export default Mixin.create({
 
-  serviceWorker: service(), 
- 
+  serviceWorker: service(),
+
   /**
    * Mixin initialization
    *
    * @method init
    */
   init() {
-  	this._super(...arguments);  
+  	this._super(...arguments);
   	this.subscribeToSWEvents();
-  }, 
- 
+  },
+
   /**
    * Subscribe to session events
    *
    * @method subscribeToSWEvents
    */
   subscribeToSWEvents() {
-    const sw = this.get('serviceWorker'); 
+    const sw = this.get('serviceWorker');
     sw.on('activated', (reg) => {
       window.alert('Content is now available offline!')
   	});
@@ -165,7 +166,7 @@ export default Mixin.create({
   		window.location.reload();
   		console.log('New version installed');
   	});
-  }  
+  }
 });
 ```
 
@@ -176,7 +177,7 @@ import ApplicationSwMixin from '<my-app>/mixins/service-worker-states';
 
 export default Route.extend(ApplicationSwMixin,{
   ....
-} 
+}
 ```
 
 ## Prevent caching lazy engines
