@@ -1,6 +1,7 @@
-import Ember from 'ember';
-
-const { Service, computed, Evented, debug } = Ember;
+import Service from '@ember/service';
+import { computed } from '@ember/object';
+import Evented from '@ember/object/evented';
+import { debug } from '@ember/debug';
 
 /*
  *
@@ -24,7 +25,7 @@ export default Service.extend(Evented, {
 	sw: computed(() => window.navigator.serviceWorker),
 
 	isSupported: computed('sw', function() {
-		const sw = this.get('sw');
+		const sw = this.sw;
 
 		if (sw) {
 			const swFeatures = ['getRegistrations', 'register'];
@@ -38,7 +39,7 @@ export default Service.extend(Evented, {
 	debug: false,
 
 	_log(message) {
-		if (this.get('debug')) {
+		if (this.debug) {
 			debug(`EmberCliServiceWorker: ${message}`);
 		}
 	},
@@ -46,7 +47,7 @@ export default Service.extend(Evented, {
 	register(swFile) {
 		this._watchUpdates();
 
-		return this.get('sw').register(swFile).then(this._onRegistration.bind(this)).catch((error) => {
+		return this.sw.register(swFile).then(this._onRegistration.bind(this)).catch((error) => {
 			this.trigger('registrationError', error);
 			this._log('Service Worker registration failed: ', error);
 
@@ -59,7 +60,7 @@ export default Service.extend(Evented, {
 	 * This does not delete items in Cache
 	 */
 	unregisterAll() {
-		return this.get('sw').getRegistrations().then((registrations) =>
+		return this.sw.getRegistrations().then((registrations) =>
 			Promise.all(
 				registrations.map((reg) =>
 					reg.unregister().then((boolean) => {
@@ -152,7 +153,7 @@ export default Service.extend(Evented, {
 	 * the new active worker. (Notfiy new version installed)
 	 */
 	_watchUpdates() {
-		this.get('sw').addEventListener('message', ({ data }) => {
+		this.sw.addEventListener('message', ({ data }) => {
 			if (data === 'reload-window') {
 				this.trigger('updated');
 				this._log('New serviceworker controlling page. You should reload');
