@@ -41,7 +41,6 @@
     "glob": "^7.1.2"
   },
   "devDependencies": {
-    "broccoli-asset-rev": "^2.4.5",
     "debug": "^3.1.0",
     "ember-ajax": "^3.0.0",
     "ember-cli": "~2.14.2",
@@ -52,7 +51,6 @@
     "ember-cli-inject-live-reload": "^1.4.1",
     "ember-cli-qunit": "^4.0.0",
     "ember-cli-shims": "^1.1.0",
-    "ember-cli-sri": "^2.1.0",
     "ember-cli-uglify": "^2.0.0",
     "ember-disable-prototype-extensions": "^1.1.2",
     "ember-engines": "^0.5.14",

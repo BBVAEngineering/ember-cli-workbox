@@ -40,7 +40,7 @@ module.exports = {
 			return;
 		}
 
-		const isProdBuild = env.match('prod');
+		const isProdBuild = Boolean(env.match('prod'));
 
 		mergeOptions(options, {
 			enabled: isProdBuild,
