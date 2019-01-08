@@ -1,3 +1,4 @@
+/* eslint-disable no-sync */
 const assert = require('chai').assert;
 const fs = require('fs');
 const path = require('path');
@@ -75,7 +76,6 @@ describe('Addon is enabled for production build', function() {
 			assertContains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
 			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[css|js]/);
 			assertContains(outputFilePath('sw.js'), /vendor\.[css|js]/);
-			assertContains(outputFilePath('sw.js'), /crossdomain\.xml/);
 			assertContains(outputFilePath('sw.js'), /index\.html/);
 			assertContains(outputFilePath('sw.js'), /robots\.txt/);
 		});
