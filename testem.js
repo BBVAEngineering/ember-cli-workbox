@@ -1,8 +1,9 @@
+/* eslint-disable no-process-env */
+'use strict';
+
 module.exports = {
-	framework: 'qunit',
 	test_page: 'tests/index.html?hidepassed',
 	disable_watching: true,
-	browser_start_timeout: 180,
 	launch_in_ci: [
 		'Chrome'
 	],
@@ -11,10 +12,11 @@ module.exports = {
 	],
 	browser_args: {
 		Chrome: [
-			'--headless',
+			process.env.TRAVIS ? '--no-sandbox' : null,
 			'--disable-gpu',
-			'--remote-debugging-port=9222',
+			'--headless',
+			'--remote-debugging-port=0',
 			'--window-size=1440,900'
-		]
+		].filter(Boolean)
 	}
 };
