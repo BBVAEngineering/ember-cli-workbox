@@ -1,4 +1,5 @@
 /* eslint-disable no-sync */
+'use strict';
 const Funnel = require('broccoli-funnel');
 const mergeTrees = require('broccoli-merge-trees');
 const BroccoliWorkbox = require('./lib/broccoli-workbox');
@@ -14,7 +15,7 @@ function mergeOptions(options, defaultOptions) {
 }
 
 module.exports = {
-	name: 'ember-cli-workbox',
+	name: require('./package').name,
 
 	isDevelopingAddon: () => true,
 
