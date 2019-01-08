@@ -5,56 +5,11 @@ const rimraf = require('rimraf').sync;
 const exec = require('child_process').exec;
 
 const TEST_TIMEOUT = 120000;
-const emberCLIPath = path.resolve(__dirname, './fixtures/simple-app/node_modules/ember-cli/bin/ember');
-const fixturePath = path.resolve(__dirname, './fixtures/simple-app');
+const MOCK_CONFIG = path.resolve(__dirname, 'default-config.js');
+const emberCLIPath = path.resolve(__dirname, '../node_modules/ember-cli/bin/ember');
+const fixturePath = path.resolve(__dirname, '..');
 const outputSWPath = outputFilePath('sw.js');
-
-describe('Addon is enabled for production build', function() {
-	this.timeout(TEST_TIMEOUT);
-
-	context('Precaches and register serviceworker', () => {
-		before(() => runEmberCommand(fixturePath, 'build --prod'));
-
-		after(() => cleanup(fixturePath));
-
-		it('produces a sw.js file', () => {
-			existFile(outputSWPath);
-		});
-
-		it('precaches assets', () => {
-			contains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
-			contains(outputFilePath('sw.js'), /assets\/simple-app\.[css|js]/);
-			contains(outputFilePath('sw.js'), /vendor\.[css|js]/);
-			contains(outputFilePath('sw.js'), /crossdomain\.xml/);
-			contains(outputFilePath('sw.js'), /index\.html/);
-			contains(outputFilePath('sw.js'), /robots\.txt/);
-		});
-
-		it('produces a sw skip waiting file, which is imported on sw.js', () => {
-			existFile(outputFilePath('assets/service-workers/skip-waiting.js'));
-			contains(outputSWPath, /"assets\/service-workers\/skip-waiting.js"/);
-		});
-	});
-});
-
-
-describe('Addon is disabled for development', function() {
-	this.timeout(TEST_TIMEOUT);
-
-	context('Precaches nothing and register serviceworker', () => {
-		before(() => runEmberCommand(fixturePath, 'build'));
-
-		after(() => cleanup(fixturePath));
-
-		it('produces a sw.js file', () => {
-			existFile(outputSWPath);
-		});
-
-		it('precaches nothing', () => {
-			contains(outputSWPath, /precacheManifest\s\=\s\[\]/);
-		});
-	});
-});
+const configPath = path.resolve(fixturePath, 'tests/dummy/config');
 
 function runEmberCommand(packagePath, command) {
 	return new Promise((resolve, reject) =>
@@ -78,12 +33,82 @@ function outputFilePath(file) {
 	return path.join(fixturePath, 'dist', file);
 }
 
-function existFile(filePath) {
-	assert.ok(fs.existsSync(filePath), filePath + ' exists');
+function assertFileExists(filePath) {
+	assert.ok(fs.existsSync(filePath), `${filePath} exists`);
 }
 
-function contains(filePath, regexp) {
+function assertContains(filePath, regexp) {
 	const fileContent = fs.readFileSync(filePath, 'utf8');
 
 	assert.ok(fileContent.match(regexp), `${filePath} contains ${regexp}`);
 }
+
+function mockConfig() {
+	fs.renameSync(path.resolve(configPath, 'environment.js'), path.resolve(configPath, 'tmp.js'));
+	fs.renameSync(MOCK_CONFIG, path.resolve(configPath, 'environment.js'));
+}
+
+function restoreConfig() {
+	fs.renameSync(path.resolve(configPath, 'environment.js'), MOCK_CONFIG);
+	fs.renameSync(path.resolve(configPath, 'tmp.js'), path.resolve(configPath, 'environment.js'));
+}
+
+describe('Addon is enabled for production build', function() {
+	this.timeout(TEST_TIMEOUT);
+
+	context('Precaches and register serviceworker', () => {
+		before(() => {
+			mockConfig();
+			return runEmberCommand(fixturePath, 'build --prod');
+		});
+
+		after(() => {
+			restoreConfig();
+			return cleanup(fixturePath);
+		});
+
+		it('produces a sw.js file', () => {
+			assertFileExists(outputSWPath);
+		});
+
+		it('precaches assets', () => {
+			assertContains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
+			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[css|js]/);
+			assertContains(outputFilePath('sw.js'), /vendor\.[css|js]/);
+			assertContains(outputFilePath('sw.js'), /crossdomain\.xml/);
+			assertContains(outputFilePath('sw.js'), /index\.html/);
+			assertContains(outputFilePath('sw.js'), /robots\.txt/);
+		});
+
+		it('produces a sw skip waiting file, which is imported on sw.js', () => {
+			assertFileExists(outputFilePath('assets/service-workers/skip-waiting.js'));
+			assertContains(outputSWPath, /"assets\/service-workers\/skip-waiting.js"/);
+		});
+	});
+});
+
+
+describe('Addon is disabled for development', function() {
+	this.timeout(TEST_TIMEOUT);
+
+	context('Precaches nothing and register serviceworker', () => {
+		before(() => {
+			mockConfig();
+			return runEmberCommand(fixturePath, 'build');
+		});
+
+		after(() => {
+			restoreConfig();
+			return cleanup(fixturePath);
+		});
+
+		it('produces a sw.js file', () => {
+			assertFileExists(outputSWPath);
+		});
+
+		it('precaches nothing', () => {
+			assertContains(outputSWPath, /precacheManifest\s\=\s\[\]/);
+		});
+	});
+});
+
