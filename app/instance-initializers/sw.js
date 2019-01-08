@@ -1,6 +1,5 @@
-import Ember from 'ember';
-
-const { getWithDefault, debug } = Ember;
+import { getWithDefault } from '@ember/object';
+import { debug } from '@ember/debug';
 
 export function getConfig(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
