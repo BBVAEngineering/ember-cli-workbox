@@ -14,7 +14,7 @@
     "test:ember": "COVERAGE=true ember test",
     "test:all": "ember try:each",
     "clean-coverage": "rm -rf coverage",
-    "merge-coverage": "cp coverage/ember/coverage-final.json coverage/ember.json && cp coverage/node/coverage-final.json coverage/node.json && nyc merge coverage coverage/coverage-final.json",
+    "merge-coverage": "cp coverage/ember/coverage-final.json coverage/ember.json && cp coverage/node/coverage-final.json coverage/node.json && nyc merge coverage coverage/coverage-final.json && istanbul report --include=coverage/final.json lcov",
     "check-coverage": "istanbul check-coverage coverage/coverage-final.json --statements 80 --functions 80 --branches 60 --lines 80",
     "commit": "git-cz",
     "posttest": "npm run report-coverage && npm run check-coverage",
