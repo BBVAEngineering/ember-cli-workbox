@@ -55,6 +55,8 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
+        before_script:
+          - npm uninstall husky
         script:
           - npx semantic-release
 
