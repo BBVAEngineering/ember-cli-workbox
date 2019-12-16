@@ -6,6 +6,11 @@ module.exports = function(environment) {
 		environment,
 		baseURL: '/',
 		locationType: 'auto',
+		'ember-cli-workbox': {
+			importScriptsTransform(importScripts) {
+				return importScripts.map((importScript) => process.env.IMPORT_SCRIPTS_PREFIX + importScript);
+			}
+		},
 		EmberENV: {
 			FEATURES: {
 				// Here you can enable experimental features on an ember canary build
