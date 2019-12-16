@@ -39,7 +39,12 @@ If you need to customize **ember-cli-workbox configuration** you can do it like 
 ENV['ember-cli-workbox'] = {
   enabled: environment !== 'test',
   debug: true,
-  autoRegister: true
+  autoRegister: true,
+  importScriptsTransform: (importScripts) => {
+    return importScripts.map((importScript) => {
+      return `https://example-cdn.com/${importScript}`;
+    }
+  }
 };
 ```
 
@@ -48,6 +53,7 @@ ENV['ember-cli-workbox'] = {
 | `enabled`      | `Boolean` | Addon is enabled. Default to true on production builds         |
 | `debug`        | `Boolean` | Log serviceworker states (registering, updating, etc)          |
 | `autoRegister` | `Boolean` | Enable the sw registration before initializing the application |
+| `importScriptsTransform` | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your environment.js file:
 

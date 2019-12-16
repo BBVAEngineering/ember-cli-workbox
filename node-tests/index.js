@@ -12,6 +12,9 @@ const fixturePath = path.resolve(__dirname, '..');
 const outputSWPath = outputFilePath('sw.js');
 const configPath = path.resolve(fixturePath, 'tests/dummy/config');
 
+// Using process.env to be accessible independent of file location
+process.env.IMPORT_SCRIPTS_PREFIX = '2d57274b-581a-4017-9b88-7f0f04b2d1a1';
+
 function runEmberCommand(packagePath, command) {
 	return new Promise((resolve, reject) =>
 		exec(`${emberCLIPath} ${command}`, {
@@ -83,6 +86,10 @@ describe('Addon is enabled for production build', function() {
 		it('produces a sw skip waiting file, which is imported on sw.js', () => {
 			assertFileExists(outputFilePath('assets/service-workers/skip-waiting.js'));
 			assertContains(outputSWPath, /"assets\/service-workers\/skip-waiting.js"/);
+		});
+
+		it('applies importScriptsTransform', () => {
+			assertContains(outputSWPath, process.env.IMPORT_SCRIPTS_PREFIX);
 		});
 	});
 });
