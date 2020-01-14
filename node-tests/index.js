@@ -41,6 +41,10 @@ function assertFileExists(filePath) {
 	assert.ok(fs.existsSync(filePath), `${filePath} exists`);
 }
 
+function assertFileDoesNotExist(filePath) {
+	assert.isNotOk(fs.existsSync(filePath), `${filePath} does not exist`);
+}
+
 function assertContains(filePath, regexp) {
 	const fileContent = fs.readFileSync(filePath, 'utf8');
 
@@ -98,10 +102,11 @@ describe('Addon is enabled for production build', function() {
 describe('Addon is disabled for development', function() {
 	this.timeout(TEST_TIMEOUT);
 
-	context('Precaches nothing and register serviceworker', () => {
+	context('Precaches nothing and does not register serviceworker', () => {
 		before(() => {
 			mockConfig();
-			return runEmberCommand(fixturePath, 'build');
+			// eslint-disable-next-line max-nested-callbacks
+			return runEmberCommand(fixturePath, 'build --prod').then(() => runEmberCommand(fixturePath, 'build'));
 		});
 
 		after(() => {
@@ -109,12 +114,28 @@ describe('Addon is disabled for development', function() {
 			return cleanup(fixturePath);
 		});
 
-		it('produces a sw.js file', () => {
-			assertFileExists(outputSWPath);
+		it('does not produce a sw.js file', () => {
+			assertFileDoesNotExist(outputSWPath);
+		});
+	});
+
+	context('Addon was enabled before and then disabled', () => {
+		before(() => {
+			mockConfig();
+			return runEmberCommand(fixturePath, 'build --prod');
 		});
 
-		it('precaches nothing', () => {
-			assertContains(outputSWPath, /precacheManifest\s\=\s\[\]/);
+		after(() => {
+			restoreConfig();
+			return cleanup(fixturePath);
+		});
+
+		it('removes sw.js file', () => {
+			assertFileExists(outputSWPath);
+			// eslint-disable-next-line max-nested-callbacks
+			runEmberCommand(fixturePath, 'build').finally(() => {
+				assertFileDoesNotExist(outputSWPath);
+			});
 		});
 	});
 });
