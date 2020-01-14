@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.5.2...v0.6.0) (2019-12-16)
+
+
+### Features
+
+* add importScriptsTransform option ([440f1f1](https://github.com/BBVAEngineering/ember-cli-workbox/commit/440f1f1))
+
 ## [0.5.2](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.5.1...v0.5.2) (2019-03-08)
 
 
