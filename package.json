@@ -10,6 +10,7 @@
     "main": "index.js"
   },
   "scripts": {
+    "lint": "npm run lint:js && npm run lint:hbs",
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint --max-warnings 0 ./*.js app config tests lib node-tests",
     "test": "npm run clean-coverage && npm run test:node && npm run test:ember && npm run merge-coverage",
@@ -43,7 +44,7 @@
   },
   "homepage": "https://github.com/BBVAEngineering/ember-cli-workbox",
   "engines": {
-    "node": "6.* || 8.* || >= 10.*"
+    "node": "8.* || >= 10.*"
   },
   "dependencies": {
     "broccoli-funnel": "^3.0.1",

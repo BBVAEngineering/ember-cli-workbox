@@ -60,11 +60,13 @@ describe('Addon is enabled for production build', function() {
 	context('Precaches and register serviceworker', () => {
 		before(() => {
 			mockConfig();
+
 			return runEmberCommand(fixturePath, 'build --prod');
 		});
 
 		after(() => {
 			restoreConfig();
+
 			return cleanup(fixturePath);
 		});
 
@@ -74,8 +76,8 @@ describe('Addon is enabled for production build', function() {
 
 		it('precaches assets', () => {
 			assertContains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
-			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[css|js]/);
-			assertContains(outputFilePath('sw.js'), /vendor\.[css|js]/);
+			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[cjs|]/);
+			assertContains(outputFilePath('sw.js'), /vendor\.[cjs|]/);
 			assertContains(outputFilePath('sw.js'), /index\.html/);
 			assertContains(outputFilePath('sw.js'), /robots\.txt/);
 		});
@@ -87,18 +89,19 @@ describe('Addon is enabled for production build', function() {
 	});
 });
 
-
 describe('Addon is disabled for development', function() {
 	this.timeout(TEST_TIMEOUT);
 
 	context('Precaches nothing and register serviceworker', () => {
 		before(() => {
 			mockConfig();
+
 			return runEmberCommand(fixturePath, 'build');
 		});
 
 		after(() => {
 			restoreConfig();
+
 			return cleanup(fixturePath);
 		});
 
@@ -107,7 +110,7 @@ describe('Addon is disabled for development', function() {
 		});
 
 		it('precaches nothing', () => {
-			assertContains(outputSWPath, /precacheManifest\s\=\s\[\]/);
+			assertContains(outputSWPath, /precacheManifest\s=\s\[]/);
 		});
 	});
 });
