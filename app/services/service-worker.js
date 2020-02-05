@@ -22,7 +22,7 @@ import { debug } from '@ember/debug';
  */
 export default Service.extend(Evented, {
 
-	sw: computed(() => window.navigator.serviceWorker),
+	sw: window.navigator.serviceWorker,
 
 	isSupported: computed('sw', function() {
 		const sw = this.sw;
@@ -59,23 +59,23 @@ export default Service.extend(Evented, {
 	 * Utility function that unregisters SW, but you still need to reload to see SW removed completely
 	 * This does not delete items in Cache
 	 */
-	unregisterAll() {
-		return this.sw.getRegistrations().then((registrations) =>
-			Promise.all(
-				registrations.map((reg) =>
-					reg.unregister().then((boolean) => {
-						if (boolean) {
-							this._log(`${reg} unregistered`);
-						} else {
-							this._log(`Error unregistering ${reg}`);
-						}
-					})
-				)
-			)
-		).then(() => {
-			this.trigger('unregistrationComplete');
-			this._log('Unregistrations complete');
-		});
+	async unregisterAll() {
+		const registrations = await this.sw.getRegistrations();
+
+		await Promise.all(
+			registrations.map(async(reg) => {
+				const boolean = await reg.unregister();
+
+				if (boolean) {
+					this._log(`${reg} unregistered`);
+				} else {
+					this._log(`Error unregistering ${reg}`);
+				}
+			})
+		);
+
+		this.trigger('unregistrationComplete');
+		this._log('Unregistrations complete');
 	},
 
 	/*
@@ -86,7 +86,6 @@ export default Service.extend(Evented, {
 		this._log('Forcing serviceWorker to activate');
 		reg.waiting.postMessage('force-activate');
 	},
-
 
 	_onRegistration(reg) {
 		this._log(`Registration succeeded. Scope is ${reg.scope}`);
@@ -100,10 +99,13 @@ export default Service.extend(Evented, {
 			// SW is waiting to activate. Can occur if multiple clients open and
 			// one of the clients is refreshed.
 			this._waiting(reg);
+
 			return;
 		}
+
 		if (reg.installing) {
 			this._awaitStateChange(reg);
+
 			return;
 		}
 
