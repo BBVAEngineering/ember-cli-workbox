@@ -30,7 +30,6 @@ module.exports = {
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
 			skipWaiting: false,
 			clientsClaim: false,
-			importWorkboxFrom: 'local',
 			cacheId: projectName
 		});
 

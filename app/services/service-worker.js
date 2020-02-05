@@ -1,5 +1,4 @@
 import Service from '@ember/service';
-import { computed } from '@ember/object';
 import Evented from '@ember/object/evented';
 import { debug } from '@ember/debug';
 
@@ -22,19 +21,22 @@ import { debug } from '@ember/debug';
  */
 export default Service.extend(Evented, {
 
-	sw: window.navigator.serviceWorker,
+	init() {
+		this._super(...arguments);
 
-	isSupported: computed('sw', function() {
-		const sw = this.sw;
+		const sw = window.navigator.serviceWorker;
+		let isSupported = false;
 
 		if (sw) {
-			const swFeatures = ['getRegistrations', 'register'];
-
-			return swFeatures.every((func) => func in sw);
+			isSupported = [
+				'getRegistrations',
+				'register'
+			].every((func) => func in sw);
 		}
 
-		return false;
-	}),
+		this.set('sw', sw);
+		this.set('isSupported', isSupported);
+	},
 
 	debug: false,
 
