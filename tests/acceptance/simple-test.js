@@ -1,5 +1,4 @@
 import { module, test } from 'qunit';
-
 import { setupApplicationTest } from 'ember-qunit';
 
 module('Acceptance | Simple Acceptance Test', (hooks) => {
@@ -52,5 +51,28 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
 			assert.notOk(registrations.length);
 		});
 	});
+
+	// test('it triggers "update" event on sw response', async function(assert) {
+	// 	const _reload = window.location.reload;
+	// 	let called = 0;
+
+	// 	Object.defineProperty(window.location, 'reload', {
+	// 		value() {
+	// 			called++;
+	// 		}
+	// 	});
+
+	// 	await this.swService._watchUpdates();
+
+	// 	const event = new Event('message');
+
+	// 	event.data = 'reload-window';
+
+	// 	this.swService.sw.dispatchEvent(event);
+
+	// 	assert.equal(called, 1, 'window.location.reload() called once');
+
+	// 	window.location.reload = _reload; // eslint-disable-line require-atomic-updates
+	// });
 });
 

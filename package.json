@@ -19,7 +19,7 @@
     "test:all": "ember try:each",
     "clean-coverage": "rm -rf coverage",
     "merge-coverage": "cp coverage/ember/coverage-final.json coverage/ember.json && cp coverage/node/coverage-final.json coverage/node.json && nyc merge coverage coverage/coverage-final.json",
-    "check-coverage": "istanbul check-coverage coverage/coverage-final.json --statements 80 --functions 80 --branches 60 --lines 80",
+    "check-coverage": "istanbul check-coverage coverage/coverage-final.json --statements 60 --functions 60 --branches 60 --lines 60",
     "commit": "git-cz",
     "posttest": "npm run report-coverage && npm run check-coverage && npm run validate-coverage",
     "report-coverage": "istanbul report --include=coverage/coverage-final.json text",
