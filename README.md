@@ -41,15 +41,20 @@ ENV['ember-cli-workbox'] = {
 
   debug: true,
 
-  autoRegister: true
+  autoRegister: true,
+
+  importScriptsTransform(importScripts) {
+    return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
+  }
 };
 ```
 
-| Property       | Type      | Description                                                    |
-|:--------------:|:---------:|:--------------------------------------------------------------:|
-| `enabled`      | `Boolean` | Addon is enabled. Defaults `true` for production builds        |
-| `debug`        | `Boolean` | Log serviceworker states (registering, updating, etc)          |
-| `autoRegister` | `Boolean` | Enable the sw registration before initializing the application |
+| Property                 | Type       | Description                                                                                                                                                         |
+|:------------------------:|:----------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| `enabled`                | `Boolean`  | Addon is enabled. Defaults `true` for production builds                                                                                                             |
+| `debug`                  | `Boolean`  | Log serviceworker states (registering, updating, etc)                                                                                                               |
+| `autoRegister`           | `Boolean`  | Enable the sw registration before initializing the application                                                                                                      |
+| `importScriptsTransform` | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js`:
 

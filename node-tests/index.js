@@ -12,6 +12,9 @@ const fixturePath = path.resolve(__dirname, '..');
 const outputSWPath = outputFilePath('sw.js');
 const configPath = path.resolve(fixturePath, 'tests/dummy/config');
 
+// Using process.env to be accessible independent of file location
+process.env.IMPORT_SCRIPTS_PREFIX = '2d57274b-581a-4017-9b88-7f0f04b2d1a1';
+
 function runEmberCommand(packagePath, command) {
 	return new Promise((resolve, reject) =>
 		exec(`${emberCLIPath} ${command}`, {
@@ -38,6 +41,10 @@ function assertFileExists(filePath) {
 	assert.ok(fs.existsSync(filePath), `${filePath} exists`);
 }
 
+function assertFileDoesNotExist(filePath) {
+	assert.isNotOk(fs.existsSync(filePath), `${filePath} does not exist`);
+}
+
 function assertContains(filePath, regexp) {
 	const fileContent = fs.readFileSync(filePath, 'utf8');
 
@@ -58,16 +65,16 @@ describe('Addon is enabled for production build', function() {
 	this.timeout(TEST_TIMEOUT);
 
 	context('Precaches and register serviceworker', () => {
-		before(() => {
+		before(async() => {
 			mockConfig();
 
-			return runEmberCommand(fixturePath, 'build --prod');
+			await runEmberCommand(fixturePath, 'build --prod');
 		});
 
-		after(() => {
+		after(async() => {
 			restoreConfig();
 
-			return cleanup(fixturePath);
+			await cleanup(fixturePath);
 		});
 
 		it('produces a sw.js file', () => {
@@ -86,31 +93,54 @@ describe('Addon is enabled for production build', function() {
 			assertFileExists(outputFilePath('assets/service-workers/skip-waiting.js'));
 			assertContains(outputSWPath, /"assets\/service-workers\/skip-waiting.js"/);
 		});
+
+		it('applies importScriptsTransform', () => {
+			assertContains(outputSWPath, process.env.IMPORT_SCRIPTS_PREFIX);
+		});
 	});
 });
 
 describe('Addon is disabled for development', function() {
 	this.timeout(TEST_TIMEOUT);
 
-	context('Precaches nothing and register serviceworker', () => {
-		before(() => {
+	context('Precaches nothing and does not register serviceworker', () => {
+		before(async() => {
 			mockConfig();
 
-			return runEmberCommand(fixturePath, 'build');
+			await runEmberCommand(fixturePath, 'build --prod');
+			await runEmberCommand(fixturePath, 'build');
 		});
 
-		after(() => {
+		after(async() => {
 			restoreConfig();
 
-			return cleanup(fixturePath);
+			await cleanup(fixturePath);
 		});
 
-		it('produces a sw.js file', () => {
+		it('does not produce a sw.js file', () => {
+			assertFileDoesNotExist(outputSWPath);
+		});
+	});
+
+	context('Addon was enabled before and then disabled', () => {
+		before(async() => {
+			mockConfig();
+
+			await runEmberCommand(fixturePath, 'build --prod');
+		});
+
+		after(async() => {
+			restoreConfig();
+
+			await cleanup(fixturePath);
+		});
+
+		it('removes sw.js file', async() => {
 			assertFileExists(outputSWPath);
-		});
 
-		it('precaches nothing', () => {
-			assertContains(outputSWPath, /precacheManifest\s=\s\[]/);
+			await runEmberCommand(fixturePath, 'build');
+
+			assertFileDoesNotExist(outputSWPath);
 		});
 	});
 });
