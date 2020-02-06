@@ -38,23 +38,25 @@ export default Service.extend(Evented, {
 		this.set('isSupported', isSupported);
 	},
 
-	debug: false,
-
 	_log(message) {
 		if (this.debug) {
-			debug(`EmberCliServiceWorker: ${message}`);
+			debug(`ember-cli-workbox: ${message}`);
 		}
 	},
 
-	register(swFile) {
+	async register(swFile) {
 		this._watchUpdates();
 
-		return this.sw.register(swFile).then(this._onRegistration.bind(this)).catch((error) => {
+		try {
+			const registration = await this.sw.register(swFile);
+
+			return this._onRegistration(registration);
+		} catch (error) {
 			this.trigger('registrationError', error);
 			this._log('Service Worker registration failed: ', error);
 
 			throw error;
-		});
+		}
 	},
 
 	/*

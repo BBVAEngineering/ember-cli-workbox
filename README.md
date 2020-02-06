@@ -38,27 +38,33 @@ If you need to customize **ember-cli-workbox configuration** you can do it like 
 
 ENV['ember-cli-workbox'] = {
   enabled: environment !== 'test',
+
   debug: true,
+
   autoRegister: true
 };
 ```
 
 | Property       | Type      | Description                                                    |
 |:--------------:|:---------:|:--------------------------------------------------------------:|
-| `enabled`      | `Boolean` | Addon is enabled. Default to true on production builds         |
+| `enabled`      | `Boolean` | Addon is enabled. Defaults `true` for production builds        |
 | `debug`        | `Boolean` | Log serviceworker states (registering, updating, etc)          |
 | `autoRegister` | `Boolean` | Enable the sw registration before initializing the application |
 
-You can further customize ember-cli-workbox by setting **workbox configurations** in your environment.js file:
+You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js`:
 
 ```javascript
 //app/config/environment.js
 
 ENV['workbox'] = {
-  globPatterns: ['**\/*.{html,js,css}'],
+  globPatterns: [
+    '**\/*.{html,js,css}'
+  ],
+
   globDirectory: './',
+
   globIgnores: [],
-  ...
+  // ...
 };
 ```
 
@@ -67,135 +73,122 @@ ENV['workbox'] = {
 | `swDest`                        | The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: `./sw.js`                                                                                                                                                                                                                                                                                                           |
 | `globPatterns`                  | Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match `**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}`                                                                                                                                                                                                                     |
 | `globDirectory`                 | The base directory you wish to match globPatterns against, related to the build directory. Default  './'                                                                                                                                                                                                                                                                                                                                                |
-| `globIgnores`                   | Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns (E.g. globIgnores: ['**\/ignored.html'])                                                                                                                                                                                                                                                                            |
+| `globIgnores`                   | Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns (E.g. `globIgnores: ['**\/ignored.html']`)                                                                                                                                                                                                                                                                            |
 | `templatedUrls`                 | If a URL is rendered generated based on some server-side logic, its contents may depend on multiple files or on some other unique string value.                                                                                                                                                                                                                                                                                                         |
 | `cacheId`                       | An optional ID to be prepended to caches used by workbox-sw. This is primarily useful for local development where multiple sites may be served from the same http://localhost origin. Defaults to your app name (config.APP.name).                                                                                                                                                                                                                      |
 | `maximumFileSizeToCacheInBytes` | This value can be used to determine the maximum size of files that will be precached                                                                                                                                                                                                                                                                                                                                                                    |
 | `runtimeCaching`                | Passing in an array of objects containing urlPatterns, handlers, and potentially options that will add the appropriate code to the generated service worker to handle runtime caching. The handler values correspond the names of the [strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-sw.Strategies) supported by workbox-sw (cacheFirst, cacheOnly, networkFirst, networkOnly, staleWhileRevalidate) |
 
 ```javascript
-runtimeCaching: [{
-  // You can use a RegExp as the pattern:
-  urlPattern: /https://api.example.com/,
-  handler: 'cacheFirst',
-  // Any options provided will be used when
-  // creating the caching strategy.
-  options: {
-    cacheName: 'my-api-cache',
-    cacheExpiration: {
-      maxEntries: 10,
+runtimeCaching: [
+  {
+    // You can use a RegExp as the pattern:
+    urlPattern: /https://api.example.com/,
+    handler: 'cacheFirst',
+    // Any options provided will be used when
+    // creating the caching strategy.
+    options: {
+      cacheName: 'my-api-cache',
+      cacheExpiration: {
+        maxEntries: 10,
+      },
     },
   },
-},
- ...
+  // ...
 ]
 ```
 
-Note that importScripts parameter is overriden by this addon to include all js files on `/public/assets/service-workers/*` folder
-> For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build)
+Note that `importScripts` parameter is overriden by this addon to include all js files on `/public/assets/service-workers/*` folder.
+
+> For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build).
+
+## Ember service
+
+This addon bundles a new Ember service called `service-worker`.
+This service will register/unregister the workers when necessary.
+
+| Property      | Type      | Description                      |
+|:-------------:|:---------:|:--------------------------------:|
+| `sw`          | `Object`  | The navigator SW API             |
+| `isSupported` | `Boolean` | Navigator is complatible with SW |
+
+**Methods:**
+
+- `register(swFile)`: Registers new service worker given a file path.
+- `unregisterAll()`: Unregisters all service workers.
+- `forceActivate(reg)`: Force a service worker activation given a registration instance.
 
 ## Subscribing to events
 
-If you are using workbox with clientsClaim:true and skipWaiting:true your serviceWorker will became active automaticatly.
+If you are using workbox with `clientsClaim: true` and `skipWaiting: true` your serviceWorker will became active automaticatly.
 In this case, if you want to force reload simply do this:
 
 ```JavaScript
 navigator.serviceWorker.addEventListener('controllerchange', function(event) {
-  console.log('New service worker controlling page. You should reload to get new changes');
+  console.log('New service worker controlling the page. Forcing reload to apply new changes.');
   window.location.reload();
 });
 ```
 
-But if you want to take control of what is the state of serviceWorker, do not activate clientsClaim and skipWaiting.
-The recomendation is using ServiceWorkerService that triggers the following events:
+But if you want to take control of what is the state of serviceWorker, do not activate `clientsClaim` and `skipWaiting`.
+The recomendation is using the Ember's `service-worker` service (bundled with this addon) that triggers the following events:
 
-- registrationComplete: sw successfully registered
-- registrationError: sw not registered
-- activated: new sw controlling page
-- waiting: new sw waiting for controlling page
-- updated: updated sw controlling page, need refresh
-- unregistrationComplete: all sw are unregistered
+- `registrationComplete`: SW successfully registered.
+- `registrationError`: SW not registered.
+- `activated`: New sw controlling page.
+- `waiting`: New sw waiting for controlling page.
+- `updated`: Updated sw controlling page, need refresh.
+- `unregistrationComplete`: All sw are unregistered.
 
 ### Why and how to use this events?
 
-By default, users have to close all tabs to a site in order to update a Service Worker. The Refresh button is not enough.
-If you make a mistake here, users will see an outdated version of your site even after refreshing
+By default, users have to close all tabs to a site in order to update a Service Worker (the Refresh button is not enough).
+If you make a mistake here, **users will see an outdated version of your site** even after refreshing.
 Service Workers break the Refresh button because they behave like “apps,” refusing to update while the app is still running, in order to maintain code consistency and client-side data consistency. We can write code to notify users when a new version is available.
 
 This addon make it easy for you and implements [google recommendation](https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users).
 Basically, what you have to do is subscribing to the event `waiting`. When event is triggered, send a message to sw in order to launch `skipWaiting + clients.claim` on it to turn it active (you can do this just calling forceActivate method on serviceWorkerService). When service worker became active it will send a message "reload-window" and "newSWActive" will be triggered.
 
-**Example of the event**
-
-See this complete example for this implementation:
+**Example:**
 
 ```javascript
 // <my-app>/mixins/service-worker-states.js
 
-import Ember from 'ember';
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
 
-const {
-  inject: { service },
-  Mixin
-} = Ember;
+export default class MyRoute extends Route {
+	@service serviceWorker;
 
-/**
- * The mixin for the application route to control service worker states
- *
- * @class ApplicationServiceWorkerMixin
- * @extends Ember.Mixin
- */
-export default Mixin.create({
+	async beforeModel() {
+		await super.beforeModel(...arguments);
 
-  serviceWorker: service(),
-
-  /**
-   * Mixin initialization
-   *
-   * @method init
-   */
-  init() {
-  	this._super(...arguments);
+    // Do not call this event twice!
   	this.subscribeToSWEvents();
-  },
+	}
 
-  /**
-   * Subscribe to session events
-   *
-   * @method subscribeToSWEvents
-   */
   subscribeToSWEvents() {
-    const sw = this.get('serviceWorker');
-    sw.on('activated', (reg) => {
+    this.serviceWorker.on('activated', (reg) => {
       window.alert('Content is now available offline!')
   	});
-  	sw.on('waiting', (reg) => {
-  		if (window.confirm('New version available! OK to refresh?')) {
+
+  	this.serviceWorker.on('waiting', (reg) => {
+  		if (window.confirm('New version available! Refresh?')) {
   			sw.forceActivate(reg);
   		}
   	});
-  	sw.on('updated', () => {
+
+  	this.serviceWorker.on('updated', () => {
   		window.location.reload();
-  		console.log('New version installed');
   	});
   }
-});
-```
-
-```javascript
-// <my-app>/routes/application.js
-
-import ApplicationSwMixin from '<my-app>/mixins/service-worker-states';
-
-export default Route.extend(ApplicationSwMixin,{
-  ....
 }
 ```
 
 ## Prevent caching lazy engines
 
 By default, this addons precaches everything, that means all the lazy engines will be precached in your service worker.
-To prevent precaching it just exclude the `engine-dist` in the addon config:
+To prevent precaching it, just exclude the `engine-dist` in the addon config:
 
 ```javascript
 var ENV = {
@@ -203,6 +196,7 @@ var ENV = {
 	  globIgnores: [
 		  'engines-dist/**/*'
 		],
+
 		runtimeCaching: [{
 			urlPattern: /engines-dist/,
 			handler: 'networkFirst'
@@ -217,22 +211,21 @@ var ENV = {
 $ DEBUG=ember-cli:workbox ember s
 ```
 
-
 ## Future improvements
 
-Ember-cli-workbox currently do not implement workboxBuild.injectManifest() feature, only works generating a new serviceworker.
+`ember-cli-workbox` currently do not implement `workboxBuild.injectManifest()` feature, only works generating a new serviceworker.
 
-What is injectManifest feature?
+**What is injectManifest feature?**
 
-If you have an existing serviceWorker, workbox-build can modify it to inject the manifest file to precache our static files.
-Basically you should have a placeholder array which is populated automatically by workboxBuild.injectManifest()
+If you have an existing serviceWorker, `workbox-build` can modify it to inject the manifest file to precache our static files.
+Basically you should have a placeholder array which is populated automatically by `workboxBuild.injectManifest()`.
 
 ```javascript
 // my existing service worker
 workboxSW.precache([]);
 ```
 
-Sometimes you'll need more control over what is cached, strategies used and custom code inside the server worker. You can do this by setting your own service worker and using the WorkboxSW object directly.
+Sometimes you'll need more control over what is cached, strategies used and custom code inside the server worker. You can do this by setting your own service worker and using the `WorkboxSW` object directly.
 
 ## Contributing
 
