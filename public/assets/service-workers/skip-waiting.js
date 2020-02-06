@@ -1,4 +1,3 @@
-
 self.addEventListener('message', ({ data }) => {
 	if (data === 'force-activate') {
 		self.skipWaiting();
