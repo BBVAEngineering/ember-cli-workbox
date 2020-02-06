@@ -12,8 +12,8 @@ module('Acceptance | Auto register', (hooks) => {
 		this.swService = this.owner.lookup('service:service-worker');
 	});
 
-	hooks.afterEach(function() {
-		return this.swService.unregisterAll();
+	hooks.afterEach(async function() {
+		await this.swService.unregisterAll();
 	});
 
 	test('its registration is made automatically', async function(assert) {
