@@ -91,61 +91,67 @@ export default Service.extend(Evented, {
 		reg.waiting.postMessage('force-activate');
 	},
 
-	_onRegistration(reg) {
-		this._log(`Registration succeeded. Scope is ${reg.scope}`);
+	_onRegistration(registration) {
+		this._log(`Registration succeeded. Scope is ${registration.scope}`);
 		this.trigger('registrationComplete');
 
-		if (!reg) {
+		if (!registration) {
 			return;
 		}
 
-		if (reg.waiting) {
+		if (registration.waiting) {
 			// SW is waiting to activate. Can occur if multiple clients open and
 			// one of the clients is refreshed.
-			this._waiting(reg);
-
-			return;
-		}
-
-		if (reg.installing) {
-			this._awaitStateChange(reg);
-
-			return;
+			this._waiting(registration);
 		}
 
 		// We are currently controlled so a new SW may be found...
 		// Add a listener in case a new SW is found,
-		reg.addEventListener('updatefound', this._awaitStateChange.bind(this, reg));
+		registration.addEventListener('updatefound', this._awaitStateChange.bind(this, registration));
 	},
 
-	/*
-	 * Listen for further changes to the new service worker's state.
-	 */
-	_awaitStateChange(reg) {
-		reg.installing.addEventListener('statechange', (event) => {
-			switch (event.target.state) {
-				case 'installed':
-					if (navigator.serviceWorker.controller) {
-						// At this point, the old content will have been purged and the fresh content will
-						// have been added to the cache.
-						// It's the perfect time to display a "New content is available; please refresh."
-						// message in the page's interface.
-						this._waiting(reg);
-					} else {
-						// At this point, everything has been precached.
-						// It's the perfect time to display a "Content is cached for offline use." message.
-						this._log('New serviceworker is controlling page. Content is now available offline!');
-						this.trigger('activated');
-					}
-					break;
+	_awaitStateChange(registration) {
+		this._log('Service Worker update found');
 
-				case 'redundant':
-					this._log('The installing service worker became redundant.');
-					break;
-				default:
-					break;
-			}
-		});
+		const installingWorker = registration.installing;
+
+		if (!installingWorker) {
+			return;
+		}
+
+		if (installingWorker.state === 'installed') {
+			this._checkSWInstalled(installingWorker, registration);
+		} else {
+			installingWorker.addEventListener('statechange', () => {
+				this._checkSWInstalled(installingWorker, registration);
+			});
+		}
+	},
+
+	_checkSWInstalled(installingWorker, registration) {
+		switch (installingWorker.state) {
+			case 'installed':
+				if (navigator.serviceWorker.controller) {
+					// At this point, the updated precached content has been fetched,
+					// but the previous service worker will still serve the older
+					// content until all client tabs are closed.
+					this._log('New content is available and will be used when all tabs for this page are closed.');
+
+					// Execute callback
+					this._waiting(registration);
+				} else {
+					// At this point, everything has been precached.
+					// It's the perfect time to display a "Content is cached for offline use." message.
+					this._log('New serviceworker is controlling page. Content is now available offline!');
+					this.trigger('activated');
+				}
+				break;
+			case 'redundant':
+				this._log('The installing service worker became redundant.');
+				break;
+			default:
+				break;
+		}
 	},
 
 	_waiting(reg) {
