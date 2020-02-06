@@ -121,7 +121,6 @@ This service will register/unregister the workers when necessary.
 
 - `register(swFile)`: Registers new service worker given a file path.
 - `unregisterAll()`: Unregisters all service workers.
-- `forceActivate(reg)`: Force a service worker activation given a registration instance.
 
 ## Subscribing to events
 
@@ -129,7 +128,8 @@ If you are using workbox with `clientsClaim: true` and `skipWaiting: true` your 
 In this case, if you want to force reload simply do this:
 
 ```JavaScript
-navigator.serviceWorker.addEventListener('controllerchange', function(event) {
+// "this.serviceWorker" means the Ember service
+this.serviceWorker.on('activated', () => {
   console.log('New service worker controlling the page. Forcing reload to apply new changes.');
   window.location.reload();
 });
@@ -138,12 +138,11 @@ navigator.serviceWorker.addEventListener('controllerchange', function(event) {
 But if you want to take control of what is the state of serviceWorker, do not activate `clientsClaim` and `skipWaiting`.
 The recomendation is using the Ember's `service-worker` service (bundled with this addon) that triggers the following events:
 
+- `error`: SW not registered.
+- `waiting`: New SW waiting for controlling page.
+- `activated`: The new SW is ready to respond.
 - `registrationComplete`: SW successfully registered.
-- `registrationError`: SW not registered.
-- `activated`: New sw controlling page.
-- `waiting`: New sw waiting for controlling page.
-- `updated`: Updated sw controlling page, need refresh.
-- `unregistrationComplete`: All sw are unregistered.
+- `unregistrationComplete`: All SW are unregistered.
 
 ### Why and how to use this events?
 
