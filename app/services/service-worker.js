@@ -18,10 +18,9 @@ import { debug } from '@ember/debug';
  *	"registrationComplete"		- sw successfully registered
  *	"unregistrationComplete"	- all sw are unregistered
  */
-export default Service.extend(Evented, {
-
-	init() {
-		this._super(...arguments);
+export default class ServiceWorker extends Service.extend(Evented) {
+	constructor() {
+		super(...arguments);
 
 		const sw = window.navigator.serviceWorker;
 		let isSupported = false;
@@ -33,15 +32,15 @@ export default Service.extend(Evented, {
 			].every((func) => func in sw);
 		}
 
-		this.set('sw', sw);
-		this.set('isSupported', isSupported);
-	},
+		this.sw = sw;
+		this.isSupported = isSupported;
+	}
 
 	_log(message) {
 		if (this.debug) {
 			debug(`ember-cli-workbox: ${message}`);
 		}
-	},
+	}
 
 	async register(swFile) {
 		try {
@@ -54,7 +53,7 @@ export default Service.extend(Evented, {
 
 			throw error;
 		}
-	},
+	}
 
 	/*
 	 * Utility function that unregisters SW, but you still need to reload to see SW removed completely
@@ -77,7 +76,7 @@ export default Service.extend(Evented, {
 
 		this.trigger('unregistrationComplete');
 		this._log('Unregistrations complete');
-	},
+	}
 
 	_onRegistration(registration) {
 		this._log(`Registration succeeded. Scope is ${registration.scope}`);
@@ -110,7 +109,7 @@ export default Service.extend(Evented, {
 				});
 			}
 		});
-	},
+	}
 
 	_checkSWInstalled(installingWorker, registration) {
 		switch (installingWorker.state) {
@@ -132,7 +131,7 @@ export default Service.extend(Evented, {
 			default:
 				break;
 		}
-	},
+	}
 
 	_waiting(registration) {
 		this._log('New serviceworker is waiting to activate. New or updated content is available.');
@@ -144,5 +143,4 @@ export default Service.extend(Evented, {
 			}
 		});
 	}
-
-});
+}
