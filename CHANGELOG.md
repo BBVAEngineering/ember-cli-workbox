@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.0.0...v1.0.1) (2020-02-10)
+
+
+### Bug Fixes
+
+* **build:** do not ignore .gitkeep from npm ([59994a3](https://github.com/BBVAEngineering/ember-cli-workbox/commit/59994a3ef879cc7ea752fd25755074b5e065be54))
+* **build:** ensure dir is created ([1ee3d00](https://github.com/BBVAEngineering/ember-cli-workbox/commit/1ee3d00b5f9339ccd061be08238a62b0327319ac))
+
 # [1.0.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.6.1...v1.0.0) (2020-02-10)
 
 
