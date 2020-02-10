@@ -1,5 +1,4 @@
 import { module, test } from 'qunit';
-
 import { setupApplicationTest } from 'ember-qunit';
 
 module('Acceptance | Simple Acceptance Test', (hooks) => {
@@ -13,44 +12,69 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
 
 		this.swService.on('registrationComplete', () =>	this.events.push('registrationComplete'));
 		this.swService.on('unregistrationComplete', () => this.events.push('unregistrationComplete'));
-		this.swService.on('registrationError', () => this.events.push('registrationError'));
+		this.swService.on('error', () => this.events.push('error'));
 		// this.swService.on('newSWwaiting', () => this.events.push('newSWwaiting'));
 		// this.swService.on('newSWActive', () => this.events.push('newSWActive'));
 	});
 
-	hooks.afterEach(function() {
-		return this.swService.unregisterAll();
+	hooks.afterEach(async function() {
+		await this.swService.unregisterAll();
 	});
 
-	test('its registration is rejected if sw file does not exist', function(assert) {
-		return this.swService.register('foo').catch((error) => {
-			assert.ok(error, 'Service worker triggers "registrationError" event');
-			assert.deepEqual(this.events, ['registrationError']);
-		});
+	test('its registration is rejected if sw file does not exist', async function(assert) {
+		try {
+			await this.swService.register('foo');
+		} catch (error) {
+			assert.ok(error, 'Service worker triggers "error" event');
+			assert.deepEqual(this.events, ['error']);
+		}
 	});
 
-	test('its registration is resolved if file exist', function(assert) {
-		return this.swService.register('/sw.js').then(() => {
-			assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
+	test('its registration is resolved if file exist', async function(assert) {
+		await this.swService.register('/sw.js');
 
-			return window.navigator.serviceWorker.getRegistrations();
-		}).then((registrations) => {
-			assert.ok(registrations.length);
-		});
+		assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
+
+		const registrations = await window.navigator.serviceWorker.getRegistrations();
+
+		assert.ok(registrations.length);
 	});
 
-	test('it unregisters sw', function(assert) {
-		return this.swService.register('/sw.js').then(() => {
-			assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
+	test('it unregisters sw', async function(assert) {
+		await this.swService.register('/sw.js');
 
-			return this.swService.unregisterAll();
-		}).then(() => {
-			assert.deepEqual(this.events, ['registrationComplete', 'unregistrationComplete'], 'Service worker does not exists');
+		assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
 
-			return window.navigator.serviceWorker.getRegistrations();
-		}).then((registrations) => {
-			assert.notOk(registrations.length);
-		});
+		await this.swService.unregisterAll();
+
+		assert.deepEqual(this.events, ['registrationComplete', 'unregistrationComplete'], 'Service worker does not exists');
+
+		const registrations = await window.navigator.serviceWorker.getRegistrations();
+
+		assert.notOk(registrations.length);
 	});
+
+	// test('it triggers "update" event on sw response', async function(assert) {
+	// 	const _reload = window.location.reload;
+	// 	let called = 0;
+
+	// 	Object.defineProperty(window.location, 'reload', {
+	// 		value() {
+	// 			called++;
+	// 		}
+	// 	});
+
+	// 	await this.swService._watchUpdates();
+
+	// 	const event = new Event('message');
+
+	// 	event.data = 'reload-window';
+
+	// 	this.swService.sw.dispatchEvent(event);
+
+	// 	assert.equal(called, 1, 'window.location.reload() called once');
+
+	// 	window.location.reload = _reload; // eslint-disable-line require-atomic-updates
+	// });
 });
 

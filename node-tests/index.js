@@ -65,14 +65,16 @@ describe('Addon is enabled for production build', function() {
 	this.timeout(TEST_TIMEOUT);
 
 	context('Precaches and register serviceworker', () => {
-		before(() => {
+		before(async() => {
 			mockConfig();
-			return runEmberCommand(fixturePath, 'build --prod');
+
+			await runEmberCommand(fixturePath, 'build --prod');
 		});
 
-		after(() => {
+		after(async() => {
 			restoreConfig();
-			return cleanup(fixturePath);
+
+			await cleanup(fixturePath);
 		});
 
 		it('produces a sw.js file', () => {
@@ -81,8 +83,8 @@ describe('Addon is enabled for production build', function() {
 
 		it('precaches assets', () => {
 			assertContains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
-			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[css|js]/);
-			assertContains(outputFilePath('sw.js'), /vendor\.[css|js]/);
+			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[cjs|]/);
+			assertContains(outputFilePath('sw.js'), /vendor\.[cjs|]/);
 			assertContains(outputFilePath('sw.js'), /index\.html/);
 			assertContains(outputFilePath('sw.js'), /robots\.txt/);
 		});
@@ -98,20 +100,21 @@ describe('Addon is enabled for production build', function() {
 	});
 });
 
-
 describe('Addon is disabled for development', function() {
 	this.timeout(TEST_TIMEOUT);
 
 	context('Precaches nothing and does not register serviceworker', () => {
-		before(() => {
+		before(async() => {
 			mockConfig();
-			// eslint-disable-next-line max-nested-callbacks
-			return runEmberCommand(fixturePath, 'build --prod').then(() => runEmberCommand(fixturePath, 'build'));
+
+			await runEmberCommand(fixturePath, 'build --prod');
+			await runEmberCommand(fixturePath, 'build');
 		});
 
-		after(() => {
+		after(async() => {
 			restoreConfig();
-			return cleanup(fixturePath);
+
+			await cleanup(fixturePath);
 		});
 
 		it('does not produce a sw.js file', () => {
@@ -120,22 +123,24 @@ describe('Addon is disabled for development', function() {
 	});
 
 	context('Addon was enabled before and then disabled', () => {
-		before(() => {
+		before(async() => {
 			mockConfig();
-			return runEmberCommand(fixturePath, 'build --prod');
+
+			await runEmberCommand(fixturePath, 'build --prod');
 		});
 
-		after(() => {
+		after(async() => {
 			restoreConfig();
-			return cleanup(fixturePath);
+
+			await cleanup(fixturePath);
 		});
 
-		it('removes sw.js file', () => {
+		it('removes sw.js file', async() => {
 			assertFileExists(outputSWPath);
-			// eslint-disable-next-line max-nested-callbacks
-			runEmberCommand(fixturePath, 'build').finally(() => {
-				assertFileDoesNotExist(outputSWPath);
-			});
+
+			await runEmberCommand(fixturePath, 'build');
+
+			assertFileDoesNotExist(outputSWPath);
 		});
 	});
 });

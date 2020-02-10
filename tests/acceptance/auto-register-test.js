@@ -4,7 +4,7 @@ import { setupApplicationTest } from 'ember-qunit';
 import { set } from '@ember/object';
 import swInitializer from 'dummy/instance-initializers/sw';
 
-module('Acceptance | Auto Register Acceptance Test', (hooks) => {
+module('Acceptance | Auto register', (hooks) => {
 	setupApplicationTest(hooks);
 
 	hooks.beforeEach(function() {
@@ -12,21 +12,21 @@ module('Acceptance | Auto Register Acceptance Test', (hooks) => {
 		this.swService = this.owner.lookup('service:service-worker');
 	});
 
-	hooks.afterEach(function() {
-		return this.swService.unregisterAll();
+	hooks.afterEach(async function() {
+		await this.swService.unregisterAll();
 	});
 
-	test('its registration is made automatically', function(assert) {
+	test('its registration is made automatically', async function(assert) {
 		swInitializer.initialize(this.owner);
 
-		return visit('/').then(
-			() => window.navigator.serviceWorker.getRegistrations()
-		).then((registrations) => {
-			assert.ok(registrations.length);
-		});
+		await visit('/');
+
+		const registrations = await window.navigator.serviceWorker.getRegistrations();
+
+		assert.ok(registrations.length);
 	});
 
-	test('its registration can be disabled', function(assert) {
+	test('its registration can be disabled', async function(assert) {
 		const config = this.owner.resolveRegistration('config:environment');
 
 		set(config, 'ember-cli-workbox.autoRegister', false);
@@ -35,10 +35,10 @@ module('Acceptance | Auto Register Acceptance Test', (hooks) => {
 
 		swInitializer.initialize(this.owner);
 
-		return visit('/').then(
-			() => window.navigator.serviceWorker.getRegistrations()
-		).then((registrations) => {
-			assert.notOk(registrations.length, 'there is no registrations');
-		});
+		await visit('/');
+
+		const registrations = await window.navigator.serviceWorker.getRegistrations();
+
+		assert.notOk(registrations.length, 'there is no registrations');
 	});
 });
