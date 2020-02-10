@@ -1,3 +1,23 @@
+# [1.0.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.6.1...v1.0.0) (2020-02-10)
+
+
+### Features
+
+* **package:** upgrade deps ([d1a4fad](https://github.com/BBVAEngineering/ember-cli-workbox/commit/d1a4fad20ff8ae5d6e334cfe7a26061cdc75d9ce))
+* **service:** change events ([18ca8fa](https://github.com/BBVAEngineering/ember-cli-workbox/commit/18ca8fa19dee5e4dcc38bb319113ef028a7734aa))
+* **service:** es6 classes ([d4a20bf](https://github.com/BBVAEngineering/ember-cli-workbox/commit/d4a20bf8c24fcfe0f4cea7c4c0d4e5db0b5d2535))
+* **sw:** new life cycle ([81932ac](https://github.com/BBVAEngineering/ember-cli-workbox/commit/81932acf7954c3711af33606dad131f68cc02f4c))
+
+
+### Styles
+
+* **sw:** empty line ([6047fa8](https://github.com/BBVAEngineering/ember-cli-workbox/commit/6047fa8f2b0e695b4f6dbdf33a716394050a629e))
+
+
+### BREAKING CHANGES
+
+* **sw:** Update workbox to v5
+
 ## [0.6.1](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.6.0...v0.6.1) (2020-01-14)
 
 
