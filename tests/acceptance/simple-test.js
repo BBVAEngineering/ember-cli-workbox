@@ -11,6 +11,7 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
 		this.swService.set('isSupported', false);
 
 		this.swService.on('registrationComplete', () =>	this.events.push('registrationComplete'));
+		this.swService.on('deleteCacheEntriesComplete', () =>	this.events.push('deleteCacheEntriesComplete'));
 		this.swService.on('unregistrationComplete', () => this.events.push('unregistrationComplete'));
 		this.swService.on('error', () => this.events.push('error'));
 		// this.swService.on('newSWwaiting', () => this.events.push('newSWwaiting'));
@@ -38,6 +39,25 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
 		const registrations = await window.navigator.serviceWorker.getRegistrations();
 
 		assert.ok(registrations.length);
+	});
+
+	test('it deletes cache entries after unregistered sw', async function(assert) {
+		await this.swService.register('/sw.js');
+
+		assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
+
+		let cacheEntries = await window.caches.keys();
+
+		assert.equal(cacheEntries.length, 1, 'There are entries into cache');
+
+		await this.swService.unregisterAll(true);
+
+		cacheEntries = await window.caches.keys();
+
+		assert.equal(cacheEntries.length, 0, 'There are not entries into cache');
+		assert.deepEqual(this.events,
+			['registrationComplete', 'deleteCacheEntriesComplete', 'unregistrationComplete'],
+			'Service worker does not exists and there are not entries into Cache');
 	});
 
 	test('it unregisters sw', async function(assert) {

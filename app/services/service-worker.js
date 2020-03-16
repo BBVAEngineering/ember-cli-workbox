@@ -59,7 +59,7 @@ export default class ServiceWorker extends Service.extend(Evented) {
 	 * Utility function that unregisters SW, but you still need to reload to see SW removed completely
 	 * This does not delete items in Cache
 	 */
-	async unregisterAll() {
+	async unregisterAll(cleanBeforeUnregister = false) {
 		const registrations = await this.sw.getRegistrations();
 
 		await Promise.all(
@@ -74,8 +74,29 @@ export default class ServiceWorker extends Service.extend(Evented) {
 			})
 		);
 
+		if (cleanBeforeUnregister) {
+			await this.deleteAllCacheItems();
+		}
+
 		this.trigger('unregistrationComplete');
 		this._log('Unregistrations complete');
+	}
+
+	async deleteAllCacheItems() {
+		try {
+			const cacheNames = await caches.keys();
+
+			await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+
+			this.trigger('deleteCacheEntriesComplete');
+
+			this._log('Delete cache entries complete');
+		} catch (error) {
+			this.trigger('error', error);
+			this._log('Cache Storage clean failed: ', error);
+
+			throw error;
+		}
 	}
 
 	_onRegistration(registration) {

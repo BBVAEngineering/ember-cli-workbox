@@ -120,7 +120,8 @@ This service will register/unregister the workers when necessary.
 **Methods:**
 
 - `register(swFile)`: Registers new service worker given a file path.
-- `unregisterAll()`: Unregisters all service workers.
+- `unregisterAll(cleanBeforeUnregister)`: Unregisters all service workers.
+- `deleteAllCacheItems()`: Delete entries saved in Cache Storage
 
 ## Subscribing to events
 

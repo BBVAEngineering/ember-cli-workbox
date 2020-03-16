@@ -9,13 +9,19 @@ export function getConfig(appInstance) {
 		isEnabled: getWithDefault(config, 'ember-cli-workbox.enabled', isProdBuild),
 		debugAddon: getWithDefault(config, 'ember-cli-workbox.debug', !isProdBuild),
 		swDestFile: getWithDefault(config, 'workbox.swDest', 'sw.js'),
-		autoRegister: getWithDefault(config, 'ember-cli-workbox.autoRegister', true)
+		autoRegister: getWithDefault(config, 'ember-cli-workbox.autoRegister', true),
+		cleanBeforeUnregister: getWithDefault(config, 'ember-cli-workbox.cleanBeforeUnregister', true)
 	};
 }
 
 export function initialize(appInstance) {
 	const swService = appInstance.lookup('service:service-worker');
-	const { isEnabled, debugAddon, swDestFile } = getConfig(appInstance);
+	const {
+		isEnabled,
+		debugAddon,
+		swDestFile,
+		cleanBeforeUnregister
+	} = getConfig(appInstance);
 
 	swService.set('debug', debugAddon);
 
@@ -25,7 +31,7 @@ export function initialize(appInstance) {
 		if (isEnabled) {
 			swService.register(swDestFile);
 		} else {
-			swService.unregisterAll();
+			swService.unregisterAll(cleanBeforeUnregister);
 		}
 	} else {
 		debug('Service workers are not supported in this browser.');
