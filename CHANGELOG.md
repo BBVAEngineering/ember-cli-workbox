@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.0.1...v1.1.0) (2020-06-16)
+
+
+### Features
+
+* **config:** new option 'importScriptsGlobPatterns' ([722c038](https://github.com/BBVAEngineering/ember-cli-workbox/commit/722c03840fe8bb924ab973ecbe00b9a32c249ef2))
+
 ## [1.0.1](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.0.0...v1.0.1) (2020-02-10)
 
 
