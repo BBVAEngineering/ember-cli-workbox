@@ -45,16 +45,21 @@ ENV['ember-cli-workbox'] = {
 
   importScriptsTransform(importScripts) {
     return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
-  }
+  },
+
+  importScriptsGlobPatterns: [
+    'assets/service-workers/*.js'
+  ]
 };
 ```
 
-| Property                 | Type       | Description                                                                                                                                                         |
-|:------------------------:|:----------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `enabled`                | `Boolean`  | Addon is enabled. Defaults `true` for production builds                                                                                                             |
-| `debug`                  | `Boolean`  | Log serviceworker states (registering, updating, etc)                                                                                                               |
-| `autoRegister`           | `Boolean`  | Enable the sw registration before initializing the application                                                                                                      |
-| `importScriptsTransform` | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
+| Property                    | Type       | Description                                                                                                                                                        |
+|:---------------------------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| `enabled`                   | `Boolean`  | Addon is enabled. Defaults `true` for production builds                                                                                                            |
+| `debug`                     | `Boolean`  | Log serviceworker states (registering, updating, etc)                                                                                                              |
+| `autoRegister`              | `Boolean`  | Enable the sw registration before initializing the application                                                                                                     |
+| `importScriptsTransform`    | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
+| `importScriptsGlobPatterns` | `Array`    | Define files that are going to be imported using [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts)   |
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js`:
 
@@ -103,7 +108,7 @@ runtimeCaching: [
 ]
 ```
 
-Note that `importScripts` parameter is overriden by this addon to include all js files on `/public/assets/service-workers/*` folder.
+Note that `importScripts` parameter is overriden by this addon to include all js files on `/public/assets/service-workers/*` folder. If you want to change this path use `importScriptsGlobPatterns` option.
 
 > For more details on Workbox configuration take a look at: [Workbox Google Developers](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build).
 

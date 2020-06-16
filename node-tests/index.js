@@ -82,6 +82,7 @@ describe('Addon is enabled for production build', function() {
 		});
 
 		it('precaches assets', () => {
+			assertContains(outputFilePath('sw.js'), /engines-dist\/my-engine\/assets\/service-workers\/engine.js/);
 			assertContains(outputFilePath('sw.js'), /assets\/service-workers\/skip-waiting.js/);
 			assertContains(outputFilePath('sw.js'), /assets\/dummy\.[cjs|]/);
 			assertContains(outputFilePath('sw.js'), /vendor\.[cjs|]/);
@@ -92,6 +93,11 @@ describe('Addon is enabled for production build', function() {
 		it('produces a sw skip waiting file, which is imported on sw.js', () => {
 			assertFileExists(outputFilePath('assets/service-workers/skip-waiting.js'));
 			assertContains(outputSWPath, /"assets\/service-workers\/skip-waiting.js"/);
+		});
+
+		it('produces a sw engine file, which is imported on sw.js', () => {
+			assertFileExists(outputFilePath('engines-dist/my-engine/assets/service-workers/engine.js'));
+			assertContains(outputSWPath, /"engines-dist\/my-engine\/assets\/service-workers\/engine.js"/);
 		});
 
 		it('applies importScriptsTransform', () => {
@@ -144,4 +150,3 @@ describe('Addon is disabled for development', function() {
 		});
 	});
 });
-
