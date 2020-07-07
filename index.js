@@ -44,7 +44,10 @@ module.exports = {
 
 		mergeOptions(options, {
 			enabled: isProdBuild,
-			debug: !isProdBuild
+			debug: !isProdBuild,
+			importScriptsGlobPatterns: [
+				'assets/service-workers/*.js',
+			]
 		});
 
 		this.options = options;
