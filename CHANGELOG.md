@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.1.0...v1.2.0) (2020-07-07)
+
+
+### Features
+
+* move files to the addon directory ([1e4f39a](https://github.com/BBVAEngineering/ember-cli-workbox/commit/1e4f39a9310490eb279fb44a9816e257535e5ea1))
+
 # [1.1.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.0.1...v1.1.0) (2020-06-16)
 
 
