@@ -16,7 +16,6 @@
     "test": "npm-run-all lint:* test:*",
     "test:node": "nyc --reporter=html --reporter=json --reporter=json-summary --reporter=lcov --report-dir coverage/node --exclude node-tests --exclude **/config/* mocha node-tests",
     "test:ember": "COVERAGE=true ember test",
-    "test:ember-compatibility": "ember try:each",
     "clean-coverage": "rm -rf coverage",
     "merge-coverage": "cp coverage/ember/coverage-final.json coverage/ember.json && cp coverage/node/coverage-final.json coverage/node.json && nyc merge coverage coverage/coverage-final.json",
     "check-coverage": "istanbul check-coverage coverage/coverage-final.json --statements 60 --functions 60 --branches 60 --lines 60",
