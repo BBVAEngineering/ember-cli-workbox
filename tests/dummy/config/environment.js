@@ -10,7 +10,7 @@ module.exports = function(environment) {
 			enabled: true
 		},
 		workbox: {
-			swDest: '/sw.js'
+			swDest: 'sw.js'
 		},
 		EmberENV: {
 			FEATURES: {

@@ -1,6 +1,9 @@
 import Service from '@ember/service';
 import Evented from '@ember/object/evented';
 import { debug } from '@ember/debug';
+import { getOwner } from '@ember/application';
+
+const EventedService = Service.extend(Evented);
 
 /*
  *
@@ -18,7 +21,11 @@ import { debug } from '@ember/debug';
  *	"registrationComplete"		- sw successfully registered
  *	"unregistrationComplete"	- all sw are unregistered
  */
-export default class ServiceWorker extends Service.extend(Evented) {
+export default class ServiceWorker extends EventedService {
+	get config() {
+		return getOwner(this).resolveRegistration('config:environment');
+	}
+
 	constructor() {
 		super(...arguments);
 
@@ -44,7 +51,7 @@ export default class ServiceWorker extends Service.extend(Evented) {
 
 	async register(swFile) {
 		try {
-			const registration = await this.sw.register(swFile);
+			const registration = await this.sw.register(`${this.config.rootURL}${swFile}`);
 
 			return this._onRegistration(registration);
 		} catch (error) {

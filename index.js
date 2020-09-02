@@ -4,16 +4,6 @@ const Funnel = require('broccoli-funnel');
 const mergeTrees = require('broccoli-merge-trees');
 const BroccoliWorkbox = require('./lib/broccoli-workbox');
 
-function mergeOptions(options, defaultOptions) {
-	for (const option in defaultOptions) {
-		if (!Object.prototype.hasOwnProperty.call(options, option)) {
-			options[option] = defaultOptions[option];
-		}
-	}
-
-	return options;
-}
-
 module.exports = {
 	name: require('./package').name,
 
@@ -22,9 +12,10 @@ module.exports = {
 	config(env, baseConfig) {
 		const workboxOptions = baseConfig.workbox || {};
 		const options = baseConfig['ember-cli-workbox'] || {};
+		const appOptions = this.app.options['ember-cli-workbox'] || {};
 		const projectName = baseConfig.APP && baseConfig.APP.name || 'app';
 
-		mergeOptions(workboxOptions, {
+		Object.assign(workboxOptions, {
 			swDest: 'sw.js',
 			globDirectory: './',
 			globPatterns: ['**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}'],
@@ -42,7 +33,7 @@ module.exports = {
 
 		const isProdBuild = Boolean(env.match('prod'));
 
-		mergeOptions(options, {
+		Object.assign(options, appOptions, {
 			enabled: isProdBuild,
 			debug: !isProdBuild,
 			importScriptsGlobPatterns: [
@@ -50,7 +41,7 @@ module.exports = {
 			]
 		});
 
-		this.options = options;
+		this._options = options;
 		this.workboxOptions = workboxOptions;
 	},
 
@@ -60,7 +51,7 @@ module.exports = {
 		}
 
 		const workboxFunnel = new BroccoliWorkbox([tree], {
-			options: this.options,
+			options: this._options,
 			workboxOptions: this.workboxOptions
 		});
 

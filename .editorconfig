@@ -14,5 +14,5 @@ tab_width = 4
 [*.hbs]
 insert_final_newline = false
 
-[*.md]
+[*.{diff,md}]
 trim_trailing_whitespace = false
