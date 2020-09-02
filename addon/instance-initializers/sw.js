@@ -1,5 +1,11 @@
-import { getWithDefault } from '@ember/object';
 import { debug } from '@ember/debug';
+import { get } from '@ember/object';
+
+function getWithDefault(obj, path, def) {
+	const value = get(obj, path);
+
+	return typeof value !== 'undefined' ? value : def;
+}
 
 export function getConfig(appInstance) {
 	const config = appInstance.resolveRegistration('config:environment');
