@@ -2,6 +2,8 @@ import Service from '@ember/service';
 import Evented from '@ember/object/evented';
 import { debug } from '@ember/debug';
 
+const EventedService = Service.extend(Evented);
+
 /*
  *
  * Service worker states:
@@ -18,7 +20,7 @@ import { debug } from '@ember/debug';
  *	"registrationComplete"		- sw successfully registered
  *	"unregistrationComplete"	- all sw are unregistered
  */
-export default class ServiceWorker extends Service.extend(Evented) {
+export default class ServiceWorker extends EventedService {
 	constructor() {
 		super(...arguments);
 
