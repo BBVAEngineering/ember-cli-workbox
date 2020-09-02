@@ -50,7 +50,7 @@ module.exports = {
 			]
 		});
 
-		this.options = options;
+		this._options = options;
 		this.workboxOptions = workboxOptions;
 	},
 
@@ -60,7 +60,7 @@ module.exports = {
 		}
 
 		const workboxFunnel = new BroccoliWorkbox([tree], {
-			options: this.options,
+			options: this._options,
 			workboxOptions: this.workboxOptions
 		});
 
