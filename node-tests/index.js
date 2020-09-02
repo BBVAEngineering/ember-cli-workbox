@@ -7,6 +7,7 @@ const exec = require('child_process').exec;
 
 const TEST_TIMEOUT = 120000;
 const MOCK_CONFIG = path.resolve(__dirname, 'default-config.js');
+const MOCK_BUILD_CONFIG = path.resolve(__dirname, 'default-ember-cli-build.js');
 const emberCLIPath = path.resolve(__dirname, '../node_modules/ember-cli/bin/ember');
 const fixturePath = path.resolve(__dirname, '..');
 const outputSWPath = outputFilePath('sw.js');
@@ -23,6 +24,7 @@ function runEmberCommand(packagePath, command) {
 			if (err) {
 				reject(err);
 			}
+
 			resolve(result);
 		})
 	);
@@ -52,13 +54,23 @@ function assertContains(filePath, regexp) {
 }
 
 function mockConfig() {
+	// config enviroment
 	fs.renameSync(path.resolve(configPath, 'environment.js'), path.resolve(configPath, 'tmp.js'));
 	fs.renameSync(MOCK_CONFIG, path.resolve(configPath, 'environment.js'));
+
+	// ember cli build
+	fs.renameSync(path.resolve(fixturePath, 'ember-cli-build.js'), path.resolve(fixturePath, 'tmp.js'));
+	fs.renameSync(MOCK_BUILD_CONFIG, path.resolve(fixturePath, 'ember-cli-build.js'));
 }
 
 function restoreConfig() {
+	// config enviroment
 	fs.renameSync(path.resolve(configPath, 'environment.js'), MOCK_CONFIG);
 	fs.renameSync(path.resolve(configPath, 'tmp.js'), path.resolve(configPath, 'environment.js'));
+
+	// ember cli build
+	fs.renameSync(path.resolve(fixturePath, 'ember-cli-build.js'), MOCK_BUILD_CONFIG);
+	fs.renameSync(path.resolve(fixturePath, 'tmp.js'), path.resolve(fixturePath, 'ember-cli-build.js'));
 }
 
 describe('Addon is enabled for production build', function() {

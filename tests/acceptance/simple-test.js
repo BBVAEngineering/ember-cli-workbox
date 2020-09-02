@@ -31,7 +31,7 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
 	});
 
 	test('its registration is resolved if file exist', async function(assert) {
-		await this.swService.register('/sw.js');
+		await this.swService.register('sw.js');
 
 		assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
 
@@ -41,7 +41,7 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
 	});
 
 	test('it unregisters sw', async function(assert) {
-		await this.swService.register('/sw.js');
+		await this.swService.register('sw.js');
 
 		assert.deepEqual(this.events, ['registrationComplete'], 'Event triggered: registrationComplete');
 

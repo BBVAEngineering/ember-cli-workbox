@@ -34,23 +34,25 @@ Installation
 If you need to customize **ember-cli-workbox configuration** you can do it like this:
 
 ```javascript
-//app/config/environment.js
+// app/config/environment.js
 
 ENV['ember-cli-workbox'] = {
   enabled: environment !== 'test',
-
   debug: true,
-
   autoRegister: true,
-
-  importScriptsTransform(importScripts) {
-    return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
-  },
-
   importScriptsGlobPatterns: [
     'assets/service-workers/*.js'
   ]
 };
+```
+
+```javascript
+// ember-cli-build.js
+const app = new EmberAddon(defaults, {
+  importScriptsTransform(importScripts) {
+    return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
+  },
+});
 ```
 
 | Property                    | Type       | Description                                                                                                                                                        |
@@ -61,7 +63,9 @@ ENV['ember-cli-workbox'] = {
 | `importScriptsTransform`    | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
 | `importScriptsGlobPatterns` | `Array`    | Define files that are going to be imported using [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts)   |
 
-You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js`:
+You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js` on in your `ember-cli-build.js`
+
+*Note*: `importScriptsTransform` must be defined in your `ember-cli-build.js`.
 
 ```javascript
 //app/config/environment.js
