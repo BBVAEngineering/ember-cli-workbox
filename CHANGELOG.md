@@ -1,3 +1,22 @@
+# [2.0.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.2.0...v2.0.0) (2020-09-02)
+
+
+### Bug Fixes
+
+* fix pr issues ([ed60cb4](https://github.com/BBVAEngineering/ember-cli-workbox/commit/ed60cb4b9c577c0d62841a63699e84eae8862222))
+* **build:** add warnings to broccoli-workbox stdout ([d5b4362](https://github.com/BBVAEngineering/ember-cli-workbox/commit/d5b43625fe576d2fd41985a19a927c24d3e78623)), closes [#91](https://github.com/BBVAEngineering/ember-cli-workbox/issues/91)
+* remove getWithDefault deprecation ([e5fe855](https://github.com/BBVAEngineering/ember-cli-workbox/commit/e5fe855a2e647be415522a259b0b78f5c691fd10)), closes [#101](https://github.com/BBVAEngineering/ember-cli-workbox/issues/101)
+
+
+### Features
+
+* use rootURL when registering service worker ([5eb0af6](https://github.com/BBVAEngineering/ember-cli-workbox/commit/5eb0af60eea03308b623e336231dc97ae84238e0)), closes [#102](https://github.com/BBVAEngineering/ember-cli-workbox/issues/102) [#100](https://github.com/BBVAEngineering/ember-cli-workbox/issues/100)
+
+
+### BREAKING CHANGES
+
+* appending rootURL to service worker could break some apps
+
 # [1.2.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.1.0...v1.2.0) (2020-07-07)
 
 
