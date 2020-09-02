@@ -7,38 +7,27 @@ dist: trusty
 addons:
   chrome: stable
 
-cache:
-  directories:
-    - $HOME/.npm
+cache: yarn
 
 env:
   global:
     - JOBS=1
 
 jobs:
-  fail_fast: true
+  fast_finish: true
   allow_failures:
     - env: EMBER_TRY_SCENARIO=ember-canary
 
   include:
     - stage: "Tests"
       before_install:
-        - npm config set spin false
-        - npm install -g npm@6
         - npm install -g codecov
-        - npm install -g greenkeeper-lockfile@1
         - npm install -g @commitlint/travis-cli
-        - npm --version
-      install:
-        - if [[ $TRAVIS_BRANCH =~ greenkeeper || $TRAVIS_PULL_REQUEST_BRANCH =~ greenkeeper ]]; then npm install; else npm ci; fi
-      before_script:
-        - greenkeeper-lockfile-update
+        - yarn --version
       script:
         - commitlint-travis
         - npm run lint
         - npm test
-      after_script:
-        - greenkeeper-lockfile-upload
       after_success:
         - codecov --file=coverage/node/lcov.info
         - codecov --file=coverage/ember/lcov.info
@@ -54,15 +43,10 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        before_script:
-          - npm uninstall husky
-        script:
-          - npx semantic-release
+        script: npx semantic-release
 
 before_install:
-  - npm config set spin false
-  - npm install -g npm@6
-  - npm --version
+  - yarn --version
 
 script:
   - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
