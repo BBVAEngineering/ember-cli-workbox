@@ -50,14 +50,8 @@ export default class ServiceWorker extends EventedService {
 	}
 
 	async register(swFile) {
-		let path = `${this.config.rootURL}${swFile}`;
-
-		if (path[0] === '/') {
-			path = window.location.origin + path;
-		}
-
 		try {
-			const registration = await this.sw.register(path);
+			const registration = await this.sw.register(`${this.config.rootURL}${swFile}`);
 
 			return this._onRegistration(registration);
 		} catch (error) {

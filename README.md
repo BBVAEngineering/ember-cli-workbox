@@ -49,9 +49,11 @@ ENV['ember-cli-workbox'] = {
 ```javascript
 // ember-cli-build.js
 const app = new EmberAddon(defaults, {
-  importScriptsTransform(importScripts) {
-    return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
-  },
+  'ember-cli-workbox': {
+    importScriptsTransform(importScripts) {
+      return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
+    }
+  }
 });
 ```
 
