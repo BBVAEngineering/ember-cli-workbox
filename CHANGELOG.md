@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.6.1...v0.6.2) (2020-09-17)
+
+
+### Bug Fixes
+
+* **skip-waiting:** prevent errors from `clients.claim()` ([82b00f1](https://github.com/BBVAEngineering/ember-cli-workbox/commit/82b00f1))
+
 ## [0.6.1](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v0.6.0...v0.6.1) (2020-01-14)
 
 
