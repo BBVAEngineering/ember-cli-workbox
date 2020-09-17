@@ -17,7 +17,7 @@ env:
 branches:
   only:
     - master
-    - /^release/\d+\.\d+/
+    - /^release\/\d+\.\d+/
 
 jobs:
   fail_fast: true
@@ -76,5 +76,5 @@ stages:
   - "Tests"
   - "Regression Tests"
   - name: "Release"
-    if: branch = master OR branch =~ /^release/\d+\.\d+/
+    if: branch = master OR branch =~ /^release\/\d+\.\d+/
 
