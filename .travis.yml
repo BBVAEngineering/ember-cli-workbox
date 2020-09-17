@@ -1,8 +1,7 @@
 ---
 language: node_js
-node_js: stable
-sudo: false
-dist: trusty
+node_js: "10"
+dist: xenial
 
 addons:
   chrome: stable
@@ -14,6 +13,11 @@ cache:
 env:
   global:
     - JOBS=1
+
+branches:
+  only:
+    - master
+    - /^release/\d+\.\d+/
 
 jobs:
   fail_fast: true
@@ -72,5 +76,5 @@ stages:
   - "Tests"
   - "Regression Tests"
   - name: "Release"
-    if: branch = master
+    if: branch = master OR branch =~ /^release/\d+\.\d+/
 
