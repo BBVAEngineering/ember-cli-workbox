@@ -67,21 +67,23 @@ const app = new EmberAddon(defaults, {
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js` on in your `ember-cli-build.js`
 
-*Note*: `importScriptsTransform` must be defined in your `ember-cli-build.js`.
+*Note*: `importScriptsTransform` and `workbox` must be defined in your `ember-cli-build.js`.
 
 ```javascript
-//app/config/environment.js
+//ember-cli-build.js
 
-ENV['workbox'] = {
-  globPatterns: [
-    '**\/*.{html,js,css}'
-  ],
+const app = new EmberAddon(defaults, {
+  workbox: {
+    globPatterns: [
+      '**\/*.{html,js,css}'
+    ],
 
-  globDirectory: './',
+    globDirectory: './',
 
-  globIgnores: [],
-  // ...
-};
+    globIgnores: [],
+    // ...
+  }
+});
 ```
 
 | Property                        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                             |
