@@ -14,7 +14,7 @@ export function getConfig(appInstance) {
 	return {
 		isEnabled: getWithDefault(config, 'ember-cli-workbox.enabled', isProdBuild),
 		debugAddon: getWithDefault(config, 'ember-cli-workbox.debug', !isProdBuild),
-		swDestFile: getWithDefault(config, 'workbox.swDest', 'sw.js'),
+		swDestFile: getWithDefault(config, 'ember-cli-workbox.swDest', 'sw.js'),
 		autoRegister: getWithDefault(config, 'ember-cli-workbox.autoRegister', true)
 	};
 }
