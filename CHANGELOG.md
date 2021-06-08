@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v2.0.0...v3.0.0) (2021-06-08)
+
+
+### Features
+
+* **config:** move workbox config from environment to ember-cli-build ([44f8fdf](https://github.com/BBVAEngineering/ember-cli-workbox/commit/44f8fdf433db6fad5e8ef125a017653bf8ca7fc8))
+
+
+### BREAKING CHANGES
+
+* **config:** workbox config has been moved to ember-cli-build.js
+
 # [2.0.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v1.2.0...v2.0.0) (2020-09-02)
 
 
