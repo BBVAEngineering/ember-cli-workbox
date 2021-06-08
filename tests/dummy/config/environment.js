@@ -9,9 +9,6 @@ module.exports = function(environment) {
 		'ember-cli-workbox': {
 			enabled: true
 		},
-		workbox: {
-			swDest: 'sw.js'
-		},
 		EmberENV: {
 			FEATURES: {
 				// Here you can enable experimental features on an ember canary build

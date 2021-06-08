@@ -3,7 +3,11 @@
 const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
-	const app = new EmberAddon(defaults, {});
+	const app = new EmberAddon(defaults, {
+		workbox: {
+			swDest: 'sw.js'
+		}
+	});
 
 	// Use `app.import` to add additional libraries to the generated
 	// output files.

@@ -10,8 +10,9 @@ module.exports = {
 	isDevelopingAddon: () => true,
 
 	config(env, baseConfig) {
-		const workboxOptions = baseConfig.workbox || {};
-		const options = baseConfig['ember-cli-workbox'] || {};
+		const workboxOptions = this.app.options.workbox || {};
+		const emberCliWorkboxOptions = baseConfig['ember-cli-workbox'];
+		const options = emberCliWorkboxOptions || {};
 		const appOptions = this.app.options['ember-cli-workbox'] || {};
 		const projectName = baseConfig.APP && baseConfig.APP.name || 'app';
 
@@ -43,6 +44,11 @@ module.exports = {
 
 		this._options = options;
 		this.workboxOptions = workboxOptions;
+
+		// Append "workbox" config to "ember-cli-workbox" config
+		if (emberCliWorkboxOptions) {
+			emberCliWorkboxOptions.swDest = workboxOptions.swDest;
+		}
 	},
 
 	postprocessTree(type, tree) {
