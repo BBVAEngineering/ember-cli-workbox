@@ -17,11 +17,11 @@ A plugin for your Ember-cli build process, giving your app offline caching as a 
 This addon simplify service worker registration and caching, powered by [workbox-build](https://www.npmjs.com/package/workbox-build). Workbox library automate precaching of static resources (HTML, JavaScript, CSS, and images) and handle runtime caching and fallback strategies. It allowed us to implement a performant strategy in which a static content is always served directly from the cache, and dynamic or remote resources are served from the network, with fallbacks to cached or static responses when needed.
 
 For more details on Workbox check out:
-* [Workbox Google Developers](https://developers.google.com/web/tools/workbox/)
-* [Service Workers cookbook](https://serviceworke.rs/)
 
-Installation
-------------------------------------------------------------------------------
+- [Workbox Google Developers](https://developers.google.com/web/tools/workbox/)
+- [Service Workers cookbook](https://serviceworke.rs/)
+
+## Installation
 
 `ember install ember-cli-workbox`
 
@@ -40,9 +40,7 @@ ENV['ember-cli-workbox'] = {
   enabled: environment !== 'test',
   debug: true,
   autoRegister: true,
-  importScriptsGlobPatterns: [
-    'assets/service-workers/*.js'
-  ]
+  importScriptsGlobPatterns: ['assets/service-workers/*.js'],
 };
 ```
 
@@ -51,51 +49,51 @@ ENV['ember-cli-workbox'] = {
 const app = new EmberAddon(defaults, {
   'ember-cli-workbox': {
     importScriptsTransform(importScripts) {
-      return importScripts.map((importScript) => `https://example-cdn.com/${importScript}`);
-    }
-  }
+      return importScripts.map(
+        (importScript) => `https://example-cdn.com/${importScript}`
+      );
+    },
+  },
 });
 ```
 
-| Property                    | Type       | Description                                                                                                                                                        |
-|:---------------------------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `enabled`                   | `Boolean`  | Addon is enabled. Defaults `true` for production builds                                                                                                            |
-| `debug`                     | `Boolean`  | Log serviceworker states (registering, updating, etc)                                                                                                              |
-| `autoRegister`              | `Boolean`  | Enable the sw registration before initializing the application                                                                                                     |
-| `importScriptsTransform`    | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
-| `importScriptsGlobPatterns` | `Array`    | Define files that are going to be imported using [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts)   |
+|          Property           |    Type    |                                                                            Description                                                                             |
+| :-------------------------: | :--------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|          `enabled`          | `Boolean`  |                                                      Addon is enabled. Defaults `true` for production builds                                                       |
+|           `debug`           | `Boolean`  |                                                       Log serviceworker states (registering, updating, etc)                                                        |
+|       `autoRegister`        | `Boolean`  |                                                   Enable the sw registration before initializing the application                                                   |
+|  `importScriptsTransform`   | `Function` | Allows for transformation of array sent to workbox [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts) |
+| `importScriptsGlobPatterns` |  `Array`   |  Define files that are going to be imported using [importScripts](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateSW-importScripts)  |
 
 You can further customize ember-cli-workbox by setting **workbox configurations** in your `config/environment.js` on in your `ember-cli-build.js`
 
-*Note*: `importScriptsTransform` and `workbox` must be defined in your `ember-cli-build.js`.
+_Note_: `importScriptsTransform` and `workbox` must be defined in your `ember-cli-build.js`.
 
 ```javascript
 //ember-cli-build.js
 
 const app = new EmberAddon(defaults, {
   workbox: {
-    globPatterns: [
-      '**\/*.{html,js,css}'
-    ],
+    globPatterns: ['**/*.{html,js,css}'],
 
     globDirectory: './',
 
     globIgnores: [],
     // ...
-  }
+  },
 });
 ```
 
-| Property                        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|:-------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `swDest`                        | The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: `./sw.js`                                                                                                                                                                                                                                                                                                           |
-| `globPatterns`                  | Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match `**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}`                                                                                                                                                                                                                     |
-| `globDirectory`                 | The base directory you wish to match globPatterns against, related to the build directory. Default  './'                                                                                                                                                                                                                                                                                                                                                |
-| `globIgnores`                   | Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns (E.g. `globIgnores: ['**\/ignored.html']`)                                                                                                                                                                                                                                                                            |
-| `templatedUrls`                 | If a URL is rendered generated based on some server-side logic, its contents may depend on multiple files or on some other unique string value.                                                                                                                                                                                                                                                                                                         |
-| `cacheId`                       | An optional ID to be prepended to caches used by workbox-sw. This is primarily useful for local development where multiple sites may be served from the same http://localhost origin. Defaults to your app name (config.APP.name).                                                                                                                                                                                                                      |
-| `maximumFileSizeToCacheInBytes` | This value can be used to determine the maximum size of files that will be precached                                                                                                                                                                                                                                                                                                                                                                    |
-| `runtimeCaching`                | Passing in an array of objects containing urlPatterns, handlers, and potentially options that will add the appropriate code to the generated service worker to handle runtime caching. The handler values correspond the names of the [strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-sw.Strategies) supported by workbox-sw (cacheFirst, cacheOnly, networkFirst, networkOnly, staleWhileRevalidate) |
+|            Property             |                                                                                                                                                                                                                       Description                                                                                                                                                                                                                       |
+| :-----------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|            `swDest`             |                                                                                                                                                      The path to the final service worker file that will be created by the build process, relative to the build directory. Default path: `./sw.js`                                                                                                                                                      |
+|         `globPatterns`          |                                                                                                           Files matching against any of these glob patterns will be included in the precache manifest. By default sw precaches all our ember application assets that match `**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}`                                                                                                           |
+|         `globDirectory`         |                                                                                                                                                                         The base directory you wish to match globPatterns against, related to the build directory. Default './'                                                                                                                                                                         |
+|          `globIgnores`          |                                                                                                                                     Files matching against any of these glob patterns will be excluded from the file manifest, overriding any matches from globPatterns (E.g. `globIgnores: ['**\/ignored.html']`)                                                                                                                                      |
+|         `templatedUrls`         |                                                                                                                                                     If a URL is rendered generated based on some server-side logic, its contents may depend on multiple files or on some other unique string value.                                                                                                                                                     |
+|            `cacheId`            |                                                                                                           An optional ID to be prepended to caches used by workbox-sw. This is primarily useful for local development where multiple sites may be served from the same http://localhost origin. Defaults to your app name (config.APP.name).                                                                                                            |
+| `maximumFileSizeToCacheInBytes` |                                                                                                                                                                                  This value can be used to determine the maximum size of files that will be precached                                                                                                                                                                                   |
+|        `runtimeCaching`         | Passing in an array of objects containing urlPatterns, handlers, and potentially options that will add the appropriate code to the generated service worker to handle runtime caching. The handler values correspond the names of the [strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-sw.Strategies) supported by workbox-sw (cacheFirst, cacheOnly, networkFirst, networkOnly, staleWhileRevalidate) |
 
 ```javascript
 runtimeCaching: [
@@ -125,9 +123,9 @@ Note that `importScripts` parameter is overriden by this addon to include all js
 This addon bundles a new Ember service called `service-worker`.
 This service will register/unregister the workers when necessary.
 
-| Property      | Type      | Description                      |
-|:-------------:|:---------:|:--------------------------------:|
-| `sw`          | `Object`  | The navigator SW API             |
+|   Property    |   Type    |           Description            |
+| :-----------: | :-------: | :------------------------------: |
+|     `sw`      | `Object`  |       The navigator SW API       |
 | `isSupported` | `Boolean` | Navigator is complatible with SW |
 
 **Methods:**
@@ -175,29 +173,29 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 
 export default class MyRoute extends Route {
-	@service serviceWorker;
+  @service serviceWorker;
 
-	async beforeModel() {
-		await super.beforeModel(...arguments);
+  async beforeModel() {
+    await super.beforeModel(...arguments);
 
     // Do not call this event twice!
-  	this.subscribeToSWEvents();
-	}
+    this.subscribeToSWEvents();
+  }
 
   subscribeToSWEvents() {
     this.serviceWorker.on('activated', (reg) => {
-      window.alert('Content is now available offline!')
-  	});
+      window.alert('Content is now available offline!');
+    });
 
-  	this.serviceWorker.on('waiting', (reg) => {
-  		if (window.confirm('New version available! Refresh?')) {
-  			sw.forceActivate(reg);
-  		}
-  	});
+    this.serviceWorker.on('waiting', (reg) => {
+      if (window.confirm('New version available! Refresh?')) {
+        sw.forceActivate(reg);
+      }
+    });
 
-  	this.serviceWorker.on('updated', () => {
-  		window.location.reload();
-  	});
+    this.serviceWorker.on('updated', () => {
+      window.location.reload();
+    });
   }
 }
 ```
@@ -210,15 +208,15 @@ To prevent precaching it, just exclude the `engine-dist` in the addon config:
 ```javascript
 var ENV = {
   workbox: {
-	  globIgnores: [
-		  'engines-dist/**/*'
-		],
+    globIgnores: ['engines-dist/**/*'],
 
-		runtimeCaching: [{
-			urlPattern: /engines-dist/,
-			handler: 'networkFirst'
-		}]
-	}
+    runtimeCaching: [
+      {
+        urlPattern: /engines-dist/,
+        handler: 'networkFirst',
+      },
+    ],
+  },
 };
 ```
 
