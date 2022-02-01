@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.0.0...v3.1.0) (2022-02-01)
+
+
+### Features
+
+* update to ember 4.1 ([35d6c01](https://github.com/BBVAEngineering/ember-cli-workbox/commit/35d6c011b24b8cce92fe5267ca9145761c9b3ee4)), closes [#106](https://github.com/BBVAEngineering/ember-cli-workbox/issues/106)
+
 # [3.0.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v2.0.0...v3.0.0) (2021-06-08)
 
 ### Features

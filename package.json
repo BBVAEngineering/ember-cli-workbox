@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-workbox",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Service worker generator with precaching and some basic configurable options using workbox-build",
   "keywords": [
     "service-worker",
