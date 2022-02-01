@@ -22,132 +22,139 @@ const EventedService = Service.extend(Evented);
  *	"unregistrationComplete"	- all sw are unregistered
  */
 export default class ServiceWorker extends EventedService {
-	get config() {
-		return getOwner(this).resolveRegistration('config:environment');
-	}
+  get config() {
+    return getOwner(this).resolveRegistration('config:environment');
+  }
 
-	constructor() {
-		super(...arguments);
+  constructor() {
+    super(...arguments);
 
-		const sw = window.navigator.serviceWorker;
-		let isSupported = false;
+    const sw = window.navigator.serviceWorker;
+    let isSupported = false;
 
-		if (sw) {
-			isSupported = [
-				'getRegistrations',
-				'register'
-			].every((func) => func in sw);
-		}
+    if (sw) {
+      isSupported = ['getRegistrations', 'register'].every(
+        (func) => func in sw
+      );
+    }
 
-		this.sw = sw;
-		this.isSupported = isSupported;
-	}
+    this.sw = sw;
+    this.isSupported = isSupported;
+  }
 
-	_log(message) {
-		if (this.debug) {
-			debug(`ember-cli-workbox: ${message}`);
-		}
-	}
+  _log(message) {
+    if (this.debug) {
+      debug(`ember-cli-workbox: ${message}`);
+    }
+  }
 
-	async register(swFile) {
-		try {
-			const registration = await this.sw.register(`${this.config.rootURL}${swFile}`);
+  async register(swFile) {
+    try {
+      const registration = await this.sw.register(
+        `${this.config.rootURL}${swFile}`
+      );
 
-			return this._onRegistration(registration);
-		} catch (error) {
-			this.trigger('error', error);
-			this._log('Service Worker registration failed: ', error);
+      return this._onRegistration(registration);
+    } catch (error) {
+      this.trigger('error', error);
+      this._log('Service Worker registration failed: ', error);
 
-			throw error;
-		}
-	}
+      throw error;
+    }
+  }
 
-	/*
-	 * Utility function that unregisters SW, but you still need to reload to see SW removed completely
-	 * This does not delete items in Cache
-	 */
-	async unregisterAll() {
-		const registrations = await this.sw.getRegistrations();
+  /*
+   * Utility function that unregisters SW, but you still need to reload to see SW removed completely
+   * This does not delete items in Cache
+   */
+  async unregisterAll() {
+    const registrations = await this.sw.getRegistrations();
 
-		await Promise.all(
-			registrations.map(async(reg) => {
-				const boolean = await reg.unregister();
+    await Promise.all(
+      registrations.map(async (reg) => {
+        const boolean = await reg.unregister();
 
-				if (boolean) {
-					this._log(`${reg} unregistered`);
-				} else {
-					this._log(`Error unregistering ${reg}`);
-				}
-			})
-		);
+        if (boolean) {
+          this._log(`${reg} unregistered`);
+        } else {
+          this._log(`Error unregistering ${reg}`);
+        }
+      })
+    );
 
-		this.trigger('unregistrationComplete');
-		this._log('Unregistrations complete');
-	}
+    this.trigger('unregistrationComplete');
+    this._log('Unregistrations complete');
+  }
 
-	_onRegistration(registration) {
-		this._log(`Registration succeeded. Scope is ${registration.scope}`);
-		this.trigger('registrationComplete');
+  _onRegistration(registration) {
+    this._log(`Registration succeeded. Scope is ${registration.scope}`);
+    this.trigger('registrationComplete');
 
-		if (!registration) {
-			return;
-		}
+    if (!registration) {
+      return;
+    }
 
-		if (registration.waiting) {
-			// SW is waiting to activate. Can occur if multiple clients open and
-			// one of the clients is refreshed.
-			this._waiting(registration);
-		}
+    if (registration.waiting) {
+      // SW is waiting to activate. Can occur if multiple clients open and
+      // one of the clients is refreshed.
+      this._waiting(registration);
+    }
 
-		// We are currently controlled so a new SW may be found...
-		// Add a listener in case a new SW is found,
-		registration.addEventListener('updatefound', () => {
-			const installingWorker = registration.installing;
+    // We are currently controlled so a new SW may be found...
+    // Add a listener in case a new SW is found,
+    registration.addEventListener('updatefound', () => {
+      const installingWorker = registration.installing;
 
-			if (!installingWorker) {
-				return;
-			}
+      if (!installingWorker) {
+        return;
+      }
 
-			if (installingWorker.state === 'installed') {
-				this._checkSWInstalled(installingWorker, registration);
-			} else {
-				installingWorker.addEventListener('statechange', () => {
-					this._checkSWInstalled(installingWorker, registration);
-				});
-			}
-		});
-	}
+      if (installingWorker.state === 'installed') {
+        this._checkSWInstalled(installingWorker, registration);
+      } else {
+        installingWorker.addEventListener('statechange', () => {
+          this._checkSWInstalled(installingWorker, registration);
+        });
+      }
+    });
+  }
 
-	_checkSWInstalled(installingWorker, registration) {
-		switch (installingWorker.state) {
-			case 'installed':
-				if (navigator.serviceWorker.controller) {
-					// At this point, the updated precached content has been fetched,
-					// but the previous service worker will still serve the older
-					// content until all client tabs are closed.
-					this._log('New content is available and will be used when all tabs for this page are closed.');
+  _checkSWInstalled(installingWorker, registration) {
+    switch (installingWorker.state) {
+      case 'installed':
+        if (navigator.serviceWorker.controller) {
+          // At this point, the updated precached content has been fetched,
+          // but the previous service worker will still serve the older
+          // content until all client tabs are closed.
+          this._log(
+            'New content is available and will be used when all tabs for this page are closed.'
+          );
 
-					// Execute callback
-					this._waiting(registration);
-				} else {
-					// At this point, everything has been precached.
-					// It's the perfect time to display a "Content is cached for offline use." message.
-					this._log('New serviceworker is controlling page. Content is now available offline!');
-				}
-				break;
-			default:
-				break;
-		}
-	}
+          // Execute callback
+          this._waiting(registration);
+        } else {
+          // At this point, everything has been precached.
+          // It's the perfect time to display a "Content is cached for offline use." message.
+          this._log(
+            'New serviceworker is controlling page. Content is now available offline!'
+          );
+        }
+        break;
+      default:
+        break;
+    }
+  }
 
-	_waiting(registration) {
-		this._log('New serviceworker is waiting to activate. New or updated content is available.');
-		this.trigger('waiting', registration);
+  _waiting(registration) {
+    this._log(
+      'New serviceworker is waiting to activate. New or updated content is available.'
+    );
+    this.trigger('waiting', registration);
 
-		registration.waiting.addEventListener('statechange', (event) => {
-			if (event.target.state === 'activated') {
-				this.trigger('activated', registration);
-			}
-		});
-	}
+    registration.waiting.addEventListener('statechange', (event) => {
+      if (event.target.state === 'activated') {
+        this.trigger('activated', registration);
+      }
+    });
+  }
 }
