@@ -10,23 +10,26 @@ module.exports = {
   isDevelopingAddon: () => true,
 
   config(env, baseConfig) {
-    const workboxOptions = (this.app && this.app.options.workbox) || {};
     const emberCliWorkboxOptions = baseConfig['ember-cli-workbox'];
-    const options = emberCliWorkboxOptions || {};
     const appOptions =
       (this.app && this.app.options['ember-cli-workbox']) || {};
     const projectName = (baseConfig.APP && baseConfig.APP.name) || 'app';
+    let workboxOptions = (this.app && this.app.options.workbox) || {};
+    let options = emberCliWorkboxOptions || {};
 
-    Object.assign(workboxOptions, {
-      swDest: 'sw.js',
-      globDirectory: './',
-      globPatterns: [
-        '**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}',
-      ],
-      skipWaiting: false,
-      clientsClaim: false,
-      cacheId: projectName,
-    });
+    workboxOptions = Object.assign(
+      {
+        swDest: 'sw.js',
+        globDirectory: './',
+        globPatterns: [
+          '**/*.{json,css,js,png,svg,eot,ttf,woff,jpg,gif,ico,xml,html,txt}',
+        ],
+        skipWaiting: false,
+        clientsClaim: false,
+        cacheId: projectName,
+      },
+      workboxOptions
+    );
 
     env = env || process.env.EMBER_ENV;
 
@@ -37,11 +40,15 @@ module.exports = {
 
     const isProdBuild = Boolean(env.match('prod'));
 
-    Object.assign(options, appOptions, {
-      enabled: isProdBuild,
-      debug: !isProdBuild,
-      importScriptsGlobPatterns: ['assets/service-workers/*.js'],
-    });
+    options = Object.assign(
+      {
+        enabled: isProdBuild,
+        debug: !isProdBuild,
+        importScriptsGlobPatterns: ['assets/service-workers/*.js'],
+      },
+      options,
+      appOptions
+    );
 
     this._options = options;
     this.workboxOptions = workboxOptions;
