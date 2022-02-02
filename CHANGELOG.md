@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.1.0...v3.1.1) (2022-02-02)
+
+
+### Bug Fixes
+
+* allow override default settings ([679ab32](https://github.com/BBVAEngineering/ember-cli-workbox/commit/679ab320ac87bd2ada286fd6c817613e55833e51)), closes [#108](https://github.com/BBVAEngineering/ember-cli-workbox/issues/108)
+
 # [3.1.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.0.0...v3.1.0) (2022-02-01)
 
 
