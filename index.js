@@ -1,6 +1,5 @@
-/* eslint-disable no-sync */
 'use strict';
-const Funnel = require('broccoli-funnel');
+
 const mergeTrees = require('broccoli-merge-trees');
 const BroccoliWorkbox = require('./lib/broccoli-workbox');
 
@@ -70,14 +69,6 @@ module.exports = {
     });
 
     return mergeTrees([tree, workboxFunnel], {
-      overwrite: true,
-    });
-  },
-
-  treeForPublic(tree) {
-    const assetsTree = new Funnel('public');
-
-    return mergeTrees([tree, assetsTree], {
       overwrite: true,
     });
   },
