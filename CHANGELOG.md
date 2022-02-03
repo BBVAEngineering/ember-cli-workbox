@@ -1,3 +1,11 @@
+## [3.1.2](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.1.1...v3.1.2) (2022-02-03)
+
+
+### Bug Fixes
+
+* remove public tree ([29e499c](https://github.com/BBVAEngineering/ember-cli-workbox/commit/29e499cf600bf20fc65d33be83c873bb4c52b365))
+* upgrade dependencies ([59c207d](https://github.com/BBVAEngineering/ember-cli-workbox/commit/59c207d4a1d4e89bdc8167ea71391714936363c2))
+
 ## [3.1.1](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.1.0...v3.1.1) (2022-02-02)
 
 
