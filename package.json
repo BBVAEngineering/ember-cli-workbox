@@ -51,7 +51,6 @@
     "validate-coverage": "test \"$(cat coverage/ember/coverage-summary.json | json total.lines.total)\" -gt 0"
   },
   "dependencies": {
-    "broccoli-funnel": "^3.0.1",
     "broccoli-merge-trees": "^4.1.0",
     "broccoli-plugin": "^4.0.1",
     "chalk": "^4.1.0",
