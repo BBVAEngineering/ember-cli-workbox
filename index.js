@@ -88,6 +88,13 @@ module.exports = {
       return tree;
     }
 
-    this._processTree(tree);
+    const workboxFunnel = new BroccoliWorkbox([tree], {
+      options: this._options,
+      workboxOptions: this.workboxOptions,
+    });
+
+    return mergeTrees([tree, workboxFunnel], {
+      overwrite: true,
+    });
   },
 };
