@@ -58,19 +58,19 @@ export default class ServiceWorker extends EventedService {
   }
 
   async register(swFile) {
-    try {
-      const swUrl = `${this.config.rootURL}${swFile}`;
-      this.wb = new Workbox(swUrl);
+    const swUrl = `${this.config.rootURL}${swFile}`;
+    this.wb = new Workbox(swUrl);
 
-      return this.wb.register().then((registration) => {
+    return this.wb
+      .register()
+      .then((registration) => {
         return this._onRegistration(registration);
+      })
+      .catch((error) => {
+        this.trigger('error', error);
+        this._log('Service Worker registration failed: ', error);
+        throw error;
       });
-    } catch (error) {
-      this.trigger('error', error);
-      this._log('Service Worker registration failed: ', error);
-
-      throw error;
-    }
   }
 
   /*
