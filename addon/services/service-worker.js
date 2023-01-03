@@ -2,6 +2,7 @@ import Service from '@ember/service';
 import Evented from '@ember/object/evented';
 import { debug } from '@ember/debug';
 import { getOwner } from '@ember/application';
+import { Workbox } from 'workbox-window';
 
 const EventedService = Service.extend(Evented);
 
@@ -22,6 +23,8 @@ const EventedService = Service.extend(Evented);
  *	"unregistrationComplete"	- all sw are unregistered
  */
 export default class ServiceWorker extends EventedService {
+  workbox;
+
   get config() {
     return getOwner(this).resolveRegistration('config:environment');
   }
@@ -48,19 +51,26 @@ export default class ServiceWorker extends EventedService {
     }
   }
 
-  async register(swFile) {
-    try {
-      const registration = await this.sw.register(
-        `${this.config.rootURL}${swFile}`
-      );
-
-      return this._onRegistration(registration);
-    } catch (error) {
-      this.trigger('error', error);
-      this._log('Service Worker registration failed: ', error);
-
-      throw error;
+  forceActivate() {
+    if (this.wb) {
+      this.wb.messageSkipWaiting();
     }
+  }
+
+  async register(swFile) {
+    const swUrl = `${this.config.rootURL}${swFile}`;
+    this.wb = new Workbox(swUrl);
+
+    return this.wb
+      .register()
+      .then((registration) => {
+        return this._onRegistration(registration);
+      })
+      .catch((error) => {
+        this.trigger('error', error);
+        this._log('Service Worker registration failed: ', error);
+        throw error;
+      });
   }
 
   /*

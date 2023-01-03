@@ -30,7 +30,7 @@ export function initialize(appInstance) {
   swService.set('debug', debugAddon);
 
   // first checks whether the browser supports service workers
-  if (swService.get('isSupported')) {
+  if (swService.isSupported) {
     // Load and register pre-caching Service Worker
     if (isEnabled) {
       swService.register(swDestFile);

@@ -9,14 +9,14 @@ module.exports = {
   isDevelopingAddon: () => true,
 
   config(env, baseConfig) {
-    const emberCliWorkboxOptions = baseConfig['ember-cli-workbox'];
+    const baseOptions = baseConfig['ember-cli-workbox'] || {};
     const appOptions =
       (this.app && this.app.options['ember-cli-workbox']) || {};
     const projectName = (baseConfig.APP && baseConfig.APP.name) || 'app';
-    let workboxOptions = (this.app && this.app.options.workbox) || {};
-    let options = emberCliWorkboxOptions || {};
+    const appWorkboxOptions = (this.app && this.app.options.workbox) || {};
 
-    workboxOptions = Object.assign(
+    const workboxOptions = Object.assign(
+      // Defaults
       {
         swDest: 'sw.js',
         globDirectory: './',
@@ -27,25 +27,27 @@ module.exports = {
         clientsClaim: false,
         cacheId: projectName,
       },
-      workboxOptions
+      // Options from environment config (workbox)
+      appWorkboxOptions
     );
 
-    env = env || process.env.EMBER_ENV;
-
     // Do nothing if no ENV. For example, when running an ember generator.
-    if (!env) {
+    if (!env && !process.env.EMBER_ENV) {
       return;
     }
 
     const isProdBuild = Boolean(env.match('prod'));
 
-    options = Object.assign(
+    const options = Object.assign(
+      // Defaults
       {
         enabled: isProdBuild,
         debug: !isProdBuild,
         importScriptsGlobPatterns: ['assets/service-workers/*.js'],
       },
-      options,
+      // Options from initial app config (ember-cli-workbox)
+      baseOptions,
+      // Options from environment config (ember-cli-workbox)
       appOptions
     );
 
@@ -53,8 +55,8 @@ module.exports = {
     this.workboxOptions = workboxOptions;
 
     // Append "workbox" config to "ember-cli-workbox" config
-    if (emberCliWorkboxOptions) {
-      emberCliWorkboxOptions.swDest = workboxOptions.swDest;
+    if (baseOptions) {
+      baseOptions.swDest = workboxOptions.swDest;
     }
   },
 
@@ -63,11 +65,16 @@ module.exports = {
       return tree;
     }
 
+    // This 'all' tree has all the app's files and assets,
+    // which is exactly what we need for making a service worker using workbox
+
+    // Our BroccoliWorkbox plugin will generate the service worker for the given tree
     const workboxFunnel = new BroccoliWorkbox([tree], {
       options: this._options,
       workboxOptions: this.workboxOptions,
     });
 
+    // Add this BroccoliWorkbox tree to the app's tree
     return mergeTrees([tree, workboxFunnel], {
       overwrite: true,
     });

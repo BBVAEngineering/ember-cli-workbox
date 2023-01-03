@@ -27,7 +27,8 @@ For more details on Workbox check out:
 
 ## Dependencies
 
-"ember-cli-uglify": "^2.0.0",
+"ember-cli-terser": "^2.0.0",
+(previously ember-cli-uglify)
 
 ## Configuration
 
