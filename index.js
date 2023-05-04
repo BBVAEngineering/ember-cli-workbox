@@ -33,6 +33,7 @@ module.exports = {
     env = env || process.env.EMBER_ENV;
 
     // Do nothing if no ENV. For example, when running an ember generator.
+    /* istanbul ignore else */
     if (!env) {
       return;
     }

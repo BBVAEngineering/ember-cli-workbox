@@ -1,5 +1,6 @@
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
+import sinon from 'sinon';
 
 module('Acceptance | Simple Acceptance Test', (hooks) => {
   setupApplicationTest(hooks);
@@ -48,6 +49,8 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
     const registrations =
       await window.navigator.serviceWorker.getRegistrations();
 
+    console.log('ave4r si ' + JSON.stringify(registrations));
+
     assert.ok(registrations.length);
   });
 
@@ -72,6 +75,39 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
       await window.navigator.serviceWorker.getRegistrations();
 
     assert.notOk(registrations.length);
+  });
+
+  test('it unregisters sw but fails', async function (assert) {
+    await this.swService.register('sw.js');
+
+    const registrations = await this.swService.sw.getRegistrations();
+    const stubs = registrations.map((reg) => {
+      return sinon.stub(reg, 'unregister').callsFake(() => {
+        return Promise.resolve(false);
+      });
+    });
+
+    const stubLog = sinon.stub(this.swService, '_log');
+
+    assert.deepEqual(
+      this.events,
+      ['registrationComplete'],
+      'Event triggered: registrationComplete'
+    );
+
+    await this.swService.unregisterAll();
+
+    assert.ok(stubLog.called);
+    assert.ok(registrations.length);
+
+    assert.deepEqual(
+      this.events,
+      ['registrationComplete', 'unregistrationComplete'],
+      'Service worker does not exists'
+    );
+
+    stubs.forEach((stubReg) => stubReg.restore());
+    stubLog.restore();
   });
 
   test.skip('it triggers "update" event on sw response', async function (assert) {
