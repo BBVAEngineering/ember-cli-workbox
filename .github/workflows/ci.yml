@@ -42,6 +42,8 @@ jobs:
           - ember-classic
         experimental: [false]
         include:
+          - ember_try_scenario: ember-beta
+            experimental: true
           - ember_try_scenario: ember-canary
             experimental: true
           - ember_try_scenario: embroider-safe
