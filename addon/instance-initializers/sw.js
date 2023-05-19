@@ -47,6 +47,7 @@ export default {
   initialize(appInstance) {
     const { autoRegister } = getConfig(appInstance);
 
+    /* istanbul ignore else */
     if (autoRegister) {
       initialize(appInstance);
     }

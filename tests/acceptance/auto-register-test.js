@@ -19,6 +19,13 @@ module('Acceptance | Auto register', (hooks) => {
   test('its registration is made automatically', async function (assert) {
     swInitializer.initialize(this.owner);
 
+    const promise = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 500);
+    });
+
+    await promise;
     await visit('/');
 
     const registrations =

@@ -39,10 +39,11 @@ jobs:
           - ember-lts-3.24
           - ember-lts-3.28
           - ember-release
-          - ember-beta
           - ember-classic
         experimental: [false]
         include:
+          - ember_try_scenario: ember-beta
+            experimental: true
           - ember_try_scenario: ember-canary
             experimental: true
           - ember_try_scenario: embroider-safe

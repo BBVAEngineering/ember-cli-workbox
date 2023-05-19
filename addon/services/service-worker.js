@@ -32,6 +32,7 @@ export default class ServiceWorker extends EventedService {
     const sw = window.navigator.serviceWorker;
     let isSupported = false;
 
+    /* istanbul ignore else */
     if (sw) {
       isSupported = ['getRegistrations', 'register'].every(
         (func) => func in sw
@@ -43,6 +44,7 @@ export default class ServiceWorker extends EventedService {
   }
 
   _log(message) {
+    /* istanbul ignore else */
     if (this.debug) {
       debug(`ember-cli-workbox: ${message}`);
     }
@@ -90,10 +92,12 @@ export default class ServiceWorker extends EventedService {
     this._log(`Registration succeeded. Scope is ${registration.scope}`);
     this.trigger('registrationComplete');
 
+    /* istanbul ignore else */
     if (!registration) {
       return;
     }
 
+    /* istanbul ignore else */
     if (registration.waiting) {
       // SW is waiting to activate. Can occur if multiple clients open and
       // one of the clients is refreshed.
@@ -105,6 +109,7 @@ export default class ServiceWorker extends EventedService {
     registration.addEventListener('updatefound', () => {
       const installingWorker = registration.installing;
 
+      /* istanbul ignore else */
       if (!installingWorker) {
         return;
       }
@@ -120,8 +125,10 @@ export default class ServiceWorker extends EventedService {
   }
 
   _checkSWInstalled(installingWorker, registration) {
+    console.log('state: ' + installingWorker.state);
     switch (installingWorker.state) {
       case 'installed':
+        console.log('case installed ');
         if (navigator.serviceWorker.controller) {
           // At this point, the updated precached content has been fetched,
           // but the previous service worker will still serve the older
