@@ -1,3 +1,14 @@
+# [3.2.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.1.2...v3.2.0) (2023-06-13)
+
+
+### Features
+
+* movemos el escenario ember-beta a experimentales ([d3459e8](https://github.com/BBVAEngineering/ember-cli-workbox/commit/d3459e87de44eb16617af6e4da893f84db0fee12))
+* update workbox ([371c1bd](https://github.com/BBVAEngineering/ember-cli-workbox/commit/371c1bdcb2f60710819c79141b4f4920524bf47a))
+* update workbox version ([2281419](https://github.com/BBVAEngineering/ember-cli-workbox/commit/2281419a001dae280be9f84d4484dab3bc1d9b5b))
+* update workbox version ([de1974b](https://github.com/BBVAEngineering/ember-cli-workbox/commit/de1974b6a75be4f77c688ef820c7cd249d60630a))
+* update yarn.lock ([19df250](https://github.com/BBVAEngineering/ember-cli-workbox/commit/19df2503f87dcddadd660f82594e389b40390640))
+
 ## [3.1.2](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.1.1...v3.1.2) (2022-02-03)
 
 
