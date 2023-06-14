@@ -49,8 +49,6 @@ module('Acceptance | Simple Acceptance Test', (hooks) => {
     const registrations =
       await window.navigator.serviceWorker.getRegistrations();
 
-    console.log('ave4r si ' + JSON.stringify(registrations));
-
     assert.ok(registrations.length);
   });
 

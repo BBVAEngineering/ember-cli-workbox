@@ -125,10 +125,8 @@ export default class ServiceWorker extends EventedService {
   }
 
   _checkSWInstalled(installingWorker, registration) {
-    console.log('state: ' + installingWorker.state);
     switch (installingWorker.state) {
       case 'installed':
-        console.log('case installed ');
         if (navigator.serviceWorker.controller) {
           // At this point, the updated precached content has been fetched,
           // but the previous service worker will still serve the older
