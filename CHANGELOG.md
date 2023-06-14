@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.2.0...v3.3.0) (2023-06-14)
+
+
+### Features
+
+* remove console log ([686ef73](https://github.com/BBVAEngineering/ember-cli-workbox/commit/686ef739297025a804429ed88e97798e7e4f8c54))
+
 # [3.2.0](https://github.com/BBVAEngineering/ember-cli-workbox/compare/v3.1.2...v3.2.0) (2023-06-13)
 
 
