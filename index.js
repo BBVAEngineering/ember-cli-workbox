@@ -59,6 +59,31 @@ module.exports = {
     }
   },
 
+  processTree(app, tree) {
+    let emberCliWorkboxAddon = app.project.addons.find(
+      ({ name }) => name === 'ember-cli-workbox'
+    );
+
+    if (!emberCliWorkboxAddon) {
+      throw new Error(
+        "Could not find initialized ember-cli-workbox addon. It must be part of your app's dependencies!"
+      );
+    }
+
+    return emberCliWorkboxAddon._processTree(tree);
+  },
+
+  _processTree(tree) {
+    const workboxFunnel = new BroccoliWorkbox([tree], {
+      options: this._options,
+      workboxOptions: this.workboxOptions,
+    });
+
+    return mergeTrees([tree, workboxFunnel], {
+      overwrite: true,
+    });
+  },
+
   postprocessTree(type, tree) {
     if (type !== 'all') {
       return tree;
